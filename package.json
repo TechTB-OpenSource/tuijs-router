@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "dependencies": {
+    "tui-router": "file:pkg-tui-router"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^4.12.0"
+  }
+}

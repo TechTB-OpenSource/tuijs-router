@@ -1,0 +1,8 @@
+{
+    "dirSite": "/src",
+    "dirTuiFiles": "/tui",
+    "cssUrls": [
+        "default.css",
+        "https://str.techtb.biz/t3s/currentversion/t3s.css"
+    ]
+}
