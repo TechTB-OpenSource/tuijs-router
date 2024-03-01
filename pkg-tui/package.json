@@ -1,9 +1,0 @@
-{
-  "name": "tui",
-  "version": "7.5.0-002",
-  "type": "module",
-  "description": "",
-  "bin": {  
-    "tui": "./bin/index.mjs"  
-  }
-}

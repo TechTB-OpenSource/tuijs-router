@@ -1,0 +1,10 @@
+{
+    "name": "src",
+    "version": "1.0.0",
+    "devDependencies": {
+        "tui": "file:../../../tui"
+    },
+    "scripts": {
+        "dev": "node ./dev/app.js"
+    }
+}
