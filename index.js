@@ -1,2 +1,2 @@
-import router from './lib/tui-router.js';
-export default router;
+import routerStart from './test/src/tui-router.js';
+export default tuiRouter;
