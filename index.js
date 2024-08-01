@@ -1,2 +1,2 @@
-import routerStart from './test/src/tui-router.js';
-export default tuiRouter;
+export { routerStart as tuiRouter } from './lib/tuiRouter.js';
+export { metaUpdateHead as tuiRouterMeta } from './lib/tuiRouterMeta.js';
