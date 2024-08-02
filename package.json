@@ -1,6 +1,6 @@
 {
   "name": "tui-router",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "A simple and easy to use client-side router for JavaScript.",
   "main": "./index.js",
   "author": "TechTB",

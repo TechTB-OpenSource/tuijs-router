@@ -1,4 +1,5 @@
 import { checkIsArray, checkIsObject } from "ttbjs";
+import { metaUpdateHead } from "./tuiRouterMeta";
 
 /**
  * @typedef {Object} RouteList - An object consisting of route paths and their corresponding route functions.
@@ -36,9 +37,10 @@ import { checkIsArray, checkIsObject } from "ttbjs";
  * @param {RouteList} routeList - List of route paths and their corresponding route functions.
  * @param {Array<string>} routeServer - A list of routes that will be directed to the server and not routed on the client.
  * @param {routeNotFound} [routeNotFound=null] - The path to the 'route not found' page.
+ * @param {SiteRouteData} [routeMetaData=null] - A list of meta data attribute pairs.
  * @returns {void}
  */
-export function routerStart(routeList, routeServer, routeNotFound = null) {
+export function routerStart(routeList, routeServer, routeNotFound = null, siteRouteData = null) {
     try {
         if (!checkIsObject(routeList)) {
             throw new Error(`The provided routeList list is not the type 'Object'.`);
