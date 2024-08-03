@@ -1,9 +1,11 @@
 {
   "name": "tui-router",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple and easy to use client-side router for JavaScript.",
   "main": "./index.js",
   "author": "TechTB",
+  "license": "MIT",
+  "repository": "github:TechTB-OpenSource/tui-router",
   "dependencies": {
     "ttbjs": "^1.1.0"
   },
