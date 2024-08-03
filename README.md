@@ -34,7 +34,7 @@ export const routeNotFound = './404.html';
 
 3. Make sure that each route function has the logic to update you page according to the route.
 
-4. Call the 'tuiRouter' function with the listed variables. This is typically done in the index.js file which is referenced in the index.html.
+4. Call the 'tuiRouter' function with the listed variables. This is typically done in the index.js file which is referenced in the index.html. ***The order will always be 'routeList, routeServer, routeNotFound'***
 
 ```js
 tuiRouter(routeList, routeServer, routeNotFound);
