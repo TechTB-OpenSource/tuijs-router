@@ -1,6 +1,6 @@
-# TUI-Router
+# TUIJS-Router
 ## A simple and easy to use client-side router for JavaScript.
-***TUI-Router is built on modules. A bundler is recommended.***
+***TUIJS-Router is built on modules. A bundler is recommended.***
 
 ***Last Updated 08/03/2024***
 

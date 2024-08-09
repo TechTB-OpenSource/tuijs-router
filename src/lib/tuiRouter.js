@@ -1,4 +1,4 @@
-import { checkIsArray, checkIsObject } from "ttbjs";
+import { checkIsArray, checkIsObject } from "tuijs-util";
 
 /**
  * @typedef {Object} RouteList - An object consisting of route paths and their corresponding route functions.

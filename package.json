@@ -1,13 +1,13 @@
 {
-  "name": "tui-router",
-  "version": "1.0.2",
+  "name": "tuijs-router",
+  "version": "0.0.5",
   "description": "A simple and easy to use client-side router for JavaScript.",
   "main": "src/index.js",
   "author": "TechTB",
   "license": "MIT",
-  "repository": "github:TechTB-OpenSource/tui-router",
+  "repository": "github:TechTB-OpenSource/tuijs-router",
+  "type": "module",
   "dependencies": {
-    "ttbjs": "^1.1.0"
-  },
-  "type": "module"
+    "tuijs-util": "^1.1.4"
+  }
 }
