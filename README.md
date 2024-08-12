@@ -6,10 +6,10 @@
 
 
 ## Getting Started
-1. Import the router function 'tuiRouter' from 'tui-router'.
+1. Import the router function 'tuiRouter' from 'tuijs-router'.
 
 ```js
-import { tuiRouter } from 'tui-router';
+import { tuiRouter } from 'tuijs-router';
 ```
 
 2. Create the following variables.
@@ -41,7 +41,7 @@ tuiRouter(routeList, routeServer, routeNotFound);
 ```
 
 ## How It Works
-TUI-Router is made up of two main parts. The first is the 'routerStart' function which validates the provided router variables, listens for specific events, and checks the links to determine the correct behavior. The second is the 'router' function. This function handles the actual routing behavior.
+TUIJS-Router is made up of two main parts. The first is the 'routerStart' function which validates the provided router variables, listens for specific events, and checks the links to determine the correct behavior. The second is the 'router' function. This function handles the actual routing behavior.
 ### Function 'routerStart'
 1. Listens for clicks on 'A' links
     1. Checks the 'href' attribute. If any of the following checks are met, the default behavior is used to navigate to the link, and client-side routing is skipped.
