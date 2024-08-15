@@ -8,12 +8,6 @@ import { checkIsArray, checkIsObject } from "tuijs-util";
  */
 
 /**
- * @typedef {Array} RouteServer - A list of routes that will be directed to the server and not routed on the client.
- * @property {string} route - The path of the desired server route.
- * @property {Array<string>} serverRoutes - A list of server route strings.
- */
-
-/**
  * @typedef {string} routeNotFound - The path to the 'route not found' page.
  */
 
@@ -34,23 +28,20 @@ import { checkIsArray, checkIsObject } from "tuijs-util";
  * Starts the routing of a single page JavaScript application.
  * Intercepts navigation events in order to allow for client-side routing.
  * @param {RouteList} routeList - List of route paths and their corresponding route functions.
- * @param {Array<string>} routeServer - A list of routes that will be directed to the server and not routed on the client.
- * @param {routeNotFound} [routeNotFound=null] - The path to the 'route not found' page.
+ * @param {routeNotFound} [routeNotFound='404'] - The path to the 'route not found' page.
  * @returns {void}
+ * @throws {Error} - If an error occurs.
  */
-export function routerStart(routeList, routeServer, routeNotFound = null) {
+export function routerStart(routeList, routeNotFound = '/404') {
     try {
         if (!checkIsObject(routeList)) {
-            throw `The provided routeList list is not the type 'Object'.`;
+            throw new Error(`The provided routeList list is not the type 'Object'.`);
         }
-        if (!checkIsArray(routeServer)) {
-            throw `The provided routeServer list is not the type 'Array'.`;
-        }
-        if (typeof routeNotFound !== 'string') {
-            throw `The routeNotFound URL string was not provided or is incorrect.`;
+        if (typeof routeNotFound !== 'string' || routeNotFound === '' || routeNotFound === '/') {
+            routeNotFound = '/404';
         }
     } catch (er) {
-        console.error(`TUI-Router: Validation error: ${er}`);
+        console.error(`TUI-Router: Validation error: ${er.message}`);
         return;
     }
     // Click event
@@ -59,84 +50,71 @@ export function routerStart(routeList, routeServer, routeNotFound = null) {
             if (event.target.tagName === 'A') {
                 const href = event.target.getAttribute('href');
                 const target = event.target.getAttribute('target');
-                // If the URL matches a server route, ignore client routing
-                for (let i = 0; i < routeServer.length; i++) {
-                    if (routeServer[i] === href) {
-                        return;
-                    }
-                }
-                // If the URL ends with '.html', ignore client routing
-                if (href.endsWith('.html')) {
-                    return;
-                }
-                // If the URL begins with 'http', 'https', ignore client routing
-                if (href.startsWith('http://') || href.startsWith('https://')) {
+                // If the client side route does not exist, send the request to the server.
+                if (!routeList[href]) {
                     return;
                 }
                 // If the URL begins with '#', ignore routing and scroll to link location on page
                 if (href.startsWith('#')) {
                     event.preventDefault();
-                    let elmId = document.getElementById(href.slice(1));
-                    if (elmId) {
-                        elmId.scrollIntoView({ behavior: "smooth" });
-                    }
+                    handleAnchorTag(href);
                     return;
                 }
                 // If the target is blank, routing is used to open the page in a new tab
                 if (target === '_blank') {
                     event.preventDefault();
-                    routerNewTab(href);
+                    handleNewTab(href);
                     return;
                 }
                 event.preventDefault();
                 history.pushState({}, '', href);
-                router(routeList, routeNotFound);
+                handleRoute(routeList, routeNotFound);
             }
+            return;
         } catch (er) {
-            throw new Error(`TUI-Router: Link handling error: ${er}`);
+            throw new Error(`TUI-Router: Link handling error: ${er.message}`);
         }
     });
-    // Navigation
+    // Navigation Event
     window.onpopstate = function () {
         try {
-            router(routeList, routeNotFound);
+            handleRoute(routeList, routeNotFound);
+            return;
         } catch (er) {
-            throw new Error(`TUI-Router: Window onpopstate error: ${er}`)
+            throw new Error(`TUI-Router: Window onpopstate error: ${er.message}`)
         }
     };
     // Initial Route
     try {
-        router(routeList, routeNotFound);
+        handleRoute(routeList, routeNotFound);
+        return;
     } catch (er) {
-        throw new Error(`TUI-Router: ${er}`)
+        throw new Error(`TUI-Router: ${er.message}`)
     }
 }
 
 /**
- * Handles the routing of a given list of routes
+ * Handles the routing logic of a given list based on the new window location.
  * @param {RouteList} routeList 
  * @param {routeNotFound} routeNotFound 
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-function router(routeList, routeNotFound) {
+function handleRoute(routeList, routeNotFound) {
     try {
-        if (routeNotFound === '' || routeNotFound === '/' || routeNotFound === null) {
-            routeNotFound = '404.html?routing_error';
-        }
         const path = window.location.pathname; // Collects current path
         if (!history.state) { // Redirect to home path if there is no history (Initial page load)
             history.replaceState({}, '', path);
         }
-        const routeHandler = routeList[path]; // Locates the path in the 'routeList' object
-        if (routeHandler) { // If the route exists call route function
-            routeHandler(); // Call route function that corresponds to 'routeHandler' variable
+        const routeFunction = routeList[path]; // Locates the path in the 'routeList' object
+        if (routeFunction) { // If the route exists call route function
+            routeFunction(); // Call route function that corresponds to 'routeHandler' variable
             return;
         }
         window.location = routeNotFound; // If the route does not exist use 'routeNotFound' page
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: ${er}`)
+        throw new Error(`TUI-Router: ${er.message}`)
     }
 }
 
@@ -146,13 +124,32 @@ function router(routeList, routeNotFound) {
  * @returns  {void}
  * @throws {Error} - If an error occurs.
  */
-function routerNewTab(route) {
+function handleNewTab(route) {
     try {
         const newTab = window.open('', '_blank');
         const newUrl = `${window.location.origin}${route}`;
         newTab.location.href = newUrl;
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: New tab error: ${er}`)
+        throw new Error(`TUI-Router: New Tab Handler Error: ${er.message}`)
+    }
+}
+
+/**
+ * Handles anchor tag routes
+ * Scrolls to element into view smoothly
+ * @param {string} href - URL 
+ * @returns {void}
+ * @throws {Error} - If an error occurs.
+ */
+function handleAnchorTag(href) {
+    try {
+        let elmId = document.getElementById(href.slice(1));
+        if (elmId) {
+            elmId.scrollIntoView({ behavior: "smooth" });
+        }
+        return;
+    } catch (er) {
+        throw new Error(`TUI-Router: Anchor Tag Handler Error: ${er.message}`)
     }
 }
