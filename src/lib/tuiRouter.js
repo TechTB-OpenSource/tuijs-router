@@ -38,7 +38,7 @@ import { checkIsArray, checkIsObject } from "tuijs-util";
  * @param {routeNotFound} [routeNotFound=null] - The path to the 'route not found' page.
  * @returns {void}
  */
-export function routerStart(routeList, routeServer, routeNotFound = null) {
+export function routerStart(routeList, routeServer, routeNotFound = 'null') {
     try {
         if (!checkIsObject(routeList)) {
             throw `The provided routeList list is not the type 'Object'.`;
@@ -47,10 +47,10 @@ export function routerStart(routeList, routeServer, routeNotFound = null) {
             throw `The provided routeServer list is not the type 'Array'.`;
         }
         if (typeof routeNotFound !== 'string') {
-            throw `The routeNotFound URL string was not provided or is incorrect.`;
+            routeNotFound = '404';
         }
     } catch (er) {
-        console.error(`TUI-Router: Validation error: ${er}`);
+        console.error(`TUI-Router: Validation error: ${er.message}`);
         return;
     }
     // Click event
@@ -59,33 +59,20 @@ export function routerStart(routeList, routeServer, routeNotFound = null) {
             if (event.target.tagName === 'A') {
                 const href = event.target.getAttribute('href');
                 const target = event.target.getAttribute('target');
-                // If the URL matches a server route, ignore client routing
-                for (let i = 0; i < routeServer.length; i++) {
-                    if (routeServer[i] === href) {
-                        return;
-                    }
-                }
-                // If the URL ends with '.html', ignore client routing
-                if (href.endsWith('.html')) {
-                    return;
-                }
-                // If the URL begins with 'http', 'https', ignore client routing
-                if (href.startsWith('http://') || href.startsWith('https://')) {
+                // Run server route checks
+                if (handleServerRoute(href, routeServer)) {
                     return;
                 }
                 // If the URL begins with '#', ignore routing and scroll to link location on page
                 if (href.startsWith('#')) {
                     event.preventDefault();
-                    let elmId = document.getElementById(href.slice(1));
-                    if (elmId) {
-                        elmId.scrollIntoView({ behavior: "smooth" });
-                    }
+                    handleAnchorTag(href);
                     return;
                 }
                 // If the target is blank, routing is used to open the page in a new tab
                 if (target === '_blank') {
                     event.preventDefault();
-                    routerNewTab(href);
+                    handleNewTab(href);
                     return;
                 }
                 event.preventDefault();
@@ -93,7 +80,7 @@ export function routerStart(routeList, routeServer, routeNotFound = null) {
                 router(routeList, routeNotFound);
             }
         } catch (er) {
-            throw new Error(`TUI-Router: Link handling error: ${er}`);
+            throw new Error(`TUI-Router: Link handling error: ${er.message}`);
         }
     });
     // Navigation
@@ -101,14 +88,14 @@ export function routerStart(routeList, routeServer, routeNotFound = null) {
         try {
             router(routeList, routeNotFound);
         } catch (er) {
-            throw new Error(`TUI-Router: Window onpopstate error: ${er}`)
+            throw new Error(`TUI-Router: Window onpopstate error: ${er.message}`)
         }
     };
     // Initial Route
     try {
         router(routeList, routeNotFound);
     } catch (er) {
-        throw new Error(`TUI-Router: ${er}`)
+        throw new Error(`TUI-Router: ${er.message}`)
     }
 }
 
@@ -122,7 +109,7 @@ export function routerStart(routeList, routeServer, routeNotFound = null) {
 function router(routeList, routeNotFound) {
     try {
         if (routeNotFound === '' || routeNotFound === '/' || routeNotFound === null) {
-            routeNotFound = '404.html?routing_error';
+            routeNotFound = '/404';
         }
         const path = window.location.pathname; // Collects current path
         if (!history.state) { // Redirect to home path if there is no history (Initial page load)
@@ -136,7 +123,29 @@ function router(routeList, routeNotFound) {
         window.location = routeNotFound; // If the route does not exist use 'routeNotFound' page
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: ${er}`)
+        throw new Error(`TUI-Router: ${er.message}`)
+    }
+}
+
+function handleServerRoute(href, routeServer) {
+    try {
+        // If the URL matches a server route, ignore client routing
+        for (let i = 0; i < routeServer.length; i++) {
+            if (routeServer[i] === href) {
+                return true;
+            }
+        }
+        // If the URL ends with '.html', ignore client routing
+        if (href.endsWith('.html')) {
+            return true;
+        }
+        // If the URL begins with 'http', 'https', ignore client routing
+        if (href.startsWith('http://') || href.startsWith('https://')) {
+            return true;
+        }
+        return false;
+    } catch (er) {
+        throw new Error(`TUI-Router: Server Route Handler Error: ${er.message}`)
     }
 }
 
@@ -146,13 +155,25 @@ function router(routeList, routeNotFound) {
  * @returns  {void}
  * @throws {Error} - If an error occurs.
  */
-function routerNewTab(route) {
+function handleNewTab(route) {
     try {
         const newTab = window.open('', '_blank');
         const newUrl = `${window.location.origin}${route}`;
         newTab.location.href = newUrl;
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: New tab error: ${er}`)
+        throw new Error(`TUI-Router: New Tab Handler Error: ${er.message}`)
+    }
+}
+
+function handleAnchorTag(href) {
+    try {
+        let elmId = document.getElementById(href.slice(1));
+        if (elmId) {
+            elmId.scrollIntoView({ behavior: "smooth" });
+        }
+        return;
+    } catch (er) {
+        throw new Error(`TUI-Router: Anchor Tag Handler Error: ${er.message}`)
     }
 }
