@@ -111,7 +111,11 @@ function handleRoute(routeList, routeNotFound) {
             routeFunction(); // Call route function that corresponds to 'routeHandler' variable
             return;
         }
-        window.location = routeNotFound; // If the route does not exist use 'routeNotFound' page
+        /**
+         * If the route does not exist use 'routeNotFound' page.
+         * This will typically not happen unless an empty route is provided in the 'routeList'.
+         */
+        window.location = routeNotFound;
         return;
     } catch (er) {
         throw new Error(`TUI-Router: ${er.message}`)

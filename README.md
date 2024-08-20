@@ -14,16 +14,15 @@ import { tuiRouter } from 'tuijs-router';
 
 2. Create the following variables.
     - routeList - List of route-path and route-function pairs. The functions should consist of the logic that will execute with the route.
-    - routeNotFound - A path to the site's not found page.
-    ***IT IS CRITICAL THAT YOUR SERVER IS SETUP TO HANDLE YOUR 'routeNotFound' ROUTE. IF ALL REQUESTS ARE SENT TO THE INDEX.HTML FILE IN YOUR SITE ROOT, YOU MAY CREATE A ROUTING LOOP.***
-
+    - routeNotFound - A path to the site's not found page. THIS SHOULD NOT BE SET TO YOUR ROOT OR INDEX.HTML AS YOU MAY CREATE A ROUTING LOOP.
+    ***IT IS CRITICAL THAT YOUR SERVER IS SETUP TO HANDLE YOUR CLIENT-SIDE ROUTES. IT IS RECOMMENDED THAT THE SERVER SIDE BE CONFIGURED TO ROUTE EACH CLIENT-SIDE ROUTE TO INDEX.HTML EXPLICITLY. IF A WILDCARD IS USED TO SEND ALL ROUTES TO THE INDEX.HTML FILE IN YOUR SITE ROOT, YOU MAY CREATE A ROUTING LOOP OR EXPERIENCE OTHER ISSUES WITH ROUTES BEING SENT TO INDEX.HTML WHEN THEY SHOULDN'T***
 ```js
 export const routeList = {
     '/': routeHomeFunction,
     '/route1': route1Function,
-    '/route2': route1Function,
-    '/route3': route1Function,
-    '/route4': route1Function,
+    '/route2': route2Function,
+    '/route3': route3Function,
+    '/route4': route4Function,
 };
 export const routeNotFound = '/404';
 ```
