@@ -1,4 +1,5 @@
-import { checkIsArray, checkIsObject } from "tuijs-util";
+import { checkIsObject } from "tuijs-util";
+import tuiMeta from "tuijs-meta";
 
 /**
  * @typedef {Object} RouteList - An object consisting of route paths and their corresponding route functions.
@@ -11,6 +12,7 @@ import { checkIsArray, checkIsObject } from "tuijs-util";
  * @typedef {string} routeNotFound - The path to the 'route not found' page.
  */
 
+//////////////////////////////////////////
 /**
  * @typedef {Object} MetaData - A list of meta data attribute pairs.
  * @property {string} attributeKey - The key of the meta tag attribute.
@@ -23,6 +25,7 @@ import { checkIsArray, checkIsObject } from "tuijs-util";
  * @property {string} title - The site or route title.
  * @property {MetaData[]} meta - The meta data for the site or route.
  */
+//////////////////////////////////////////
 
 /**
  * Starts the routing of a single page JavaScript application.
@@ -101,6 +104,36 @@ export function routerStart(routeList, routeNotFound = '/404') {
  * @throws {Error} - If an error occurs.
  */
 function handleRoute(routeList, routeNotFound) {
+    try {
+        const path = window.location.pathname; // Collects current path
+        if (!history.state) { // Redirect to home path if there is no history (Initial page load)
+            history.replaceState({}, '', path);
+        }
+        const routeFunction = routeList[path]; // Locates the path in the 'routeList' object
+        if (routeFunction) { // If the route exists call route function
+            routeFunction(); // Call route function that corresponds to 'routeHandler' variable
+            return;
+        }
+        /**
+         * If the route does not exist use 'routeNotFound' page.
+         * This will typically not happen unless an empty route is provided in the 'routeList'.
+         */
+        window.location = routeNotFound;
+        return;
+    } catch (er) {
+        throw new Error(`TUI-Router: ${er.message}`)
+    }
+}
+
+/**
+ * Handles the routing logic of a given list based on the new window location, as well as updates the meta tags for the page.
+ * @param {RouteList} routeList 
+ * @param {routeNotFound} routeNotFound 
+ * @param {routeMeta} routeMeta
+ * @returns {void}
+ * @throws {Error} - If an error occurs.
+ */
+function handleRouteMeta(routeList, routeNotFound, routeMetaData) {
     try {
         const path = window.location.pathname; // Collects current path
         if (!history.state) { // Redirect to home path if there is no history (Initial page load)
