@@ -136,8 +136,10 @@ export function routerStartV2(RouteListObject) {
     }
 
     function sanitizePath(path) {
-        return;
-        return path.replace(/\/+$/, ''); // Remove trailing slashes
+        if (path === '/') {
+            return '/';
+        }
+        return path.replace(/\/+$/, '');
     }
 
     function addRoute(routeObject) {
