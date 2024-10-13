@@ -1,14 +1,10 @@
-import { checkIsArray, checkIsObject } from "tuijs-util";
+import { checkIsObject } from "tuijs-util";
 
 /**
  * @typedef {Object} RouteList - An object consisting of route paths and their corresponding route functions.
  * @property {string} route - The path of the desired server route.
  * @property {Function} routeFunction - The function to handle the route.
  * @property {Object<string, Function>} routes - A mapping of route paths to route functions.
- */
-
-/**
- * @typedef {string} routeNotFound - The path to the 'route not found' page.
  */
 
 /**
@@ -28,17 +24,13 @@ import { checkIsArray, checkIsObject } from "tuijs-util";
  * Starts the routing of a single page JavaScript application.
  * Intercepts navigation events in order to allow for client-side routing.
  * @param {RouteList} routeList - List of route paths and their corresponding route functions.
- * @param {routeNotFound} [routeNotFound='404'] - The path to the 'route not found' page.
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-export function routerStart(routeList, routeNotFound = '/404') {
+export function routerStart(routeList) {
     try {
         if (!checkIsObject(routeList)) {
             throw new Error(`The provided routeList list is not the type 'Object'.`);
-        }
-        if (typeof routeNotFound !== 'string' || routeNotFound === '' || routeNotFound === '/') {
-            routeNotFound = '/404';
         }
     } catch (er) {
         console.error(`TUI-Router: Validation error: ${er.message}`);
@@ -68,7 +60,7 @@ export function routerStart(routeList, routeNotFound = '/404') {
                 }
                 event.preventDefault();
                 history.pushState({}, '', href);
-                handleRoute(routeList, routeNotFound);
+                handleRoute(routeList);
             }
             return;
         } catch (er) {
@@ -78,7 +70,7 @@ export function routerStart(routeList, routeNotFound = '/404') {
     // Navigation Event
     window.onpopstate = function () {
         try {
-            handleRoute(routeList, routeNotFound);
+            handleRoute(routeList);
             return;
         } catch (er) {
             throw new Error(`TUI-Router: Window onpopstate error: ${er.message}`)
@@ -86,7 +78,7 @@ export function routerStart(routeList, routeNotFound = '/404') {
     };
     // Initial Route
     try {
-        handleRoute(routeList, routeNotFound);
+        handleRoute(routeList);
         return;
     } catch (er) {
         throw new Error(`TUI-Router: ${er.message}`)
@@ -96,13 +88,12 @@ export function routerStart(routeList, routeNotFound = '/404') {
 /**
  * Handles the routing logic of a given list based on the new window location.
  * @param {RouteList} routeList 
- * @param {routeNotFound} routeNotFound 
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-function handleRoute(routeList, routeNotFound) {
+function handleRoute(routeList) {
     try {
-        const path = window.location.pathname; // Collects current path
+        const path = sanitizePath(window.location.pathname); 
         if (!history.state) { // Redirect to home path if there is no history (Initial page load)
             history.replaceState({}, '', path);
         }
@@ -111,11 +102,6 @@ function handleRoute(routeList, routeNotFound) {
             routeFunction(); // Call route function that corresponds to 'routeHandler' variable
             return;
         }
-        /**
-         * If the route does not exist use 'routeNotFound' page.
-         * This will typically not happen unless an empty route is provided in the 'routeList'.
-         */
-        window.location = routeNotFound;
         return;
     } catch (er) {
         throw new Error(`TUI-Router: ${er.message}`)
@@ -156,4 +142,11 @@ function handleAnchorTag(href) {
     } catch (er) {
         throw new Error(`TUI-Router: Anchor Tag Handler Error: ${er.message}`)
     }
+}
+
+function sanitizePath(path) {
+    if (path === '/') {
+        return '/';
+    }
+    return path.replace(/\/+$/, '');
 }

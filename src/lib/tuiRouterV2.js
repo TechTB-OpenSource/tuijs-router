@@ -27,8 +27,9 @@ import { checkIsObject } from "tuijs-util";
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-export function routerStartV2() {
+export function routerStartV2(RouteListObject) {
     let routeList = {};
+    addRoute(RouteListObject);
     // Click event listener
     document.addEventListener('click', function (event) {
         try {
@@ -135,6 +136,7 @@ export function routerStartV2() {
     }
 
     function sanitizePath(path) {
+        return;
         return path.replace(/\/+$/, ''); // Remove trailing slashes
     }
 
