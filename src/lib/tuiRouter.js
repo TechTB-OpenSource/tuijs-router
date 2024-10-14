@@ -27,13 +27,34 @@ import { checkIsObject } from "tuijs-util";
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-export function routerStart(routeList) {
+export function routerStart(routeList, redirectList = null) {
     try {
         if (!checkIsObject(routeList)) {
             throw new Error(`The provided routeList list is not the type 'Object'.`);
         }
+        Object.keys(routeList).forEach((key) => {
+            if (typeof key !== "string") {
+                throw new Error(`The provided route key "${key}" must be a string.`);
+            }
+            if (typeof routeList[key] !== "function") {
+                throw new Error(`The provided route value for "${key}" must be a function.`);
+            }
+        });
+        if (redirectList !== null) {
+            if (!checkIsObject(redirectList)) {
+                throw new Error(`The provided routeList list is not the type 'Object'.`);
+            }
+            Object.keys(redirectList).forEach((key) => {
+                if (typeof key !== "string") {
+                    throw new Error(`The provided route key "${key}" must be a string.`);
+                }
+                if (typeof redirectList[key] !== "string") {
+                    throw new Error(`The provided route value for "${key}" must be a string.`);
+                }
+            });
+        }
     } catch (er) {
-        console.error(`TUI-Router: Validation error: ${er.message}`);
+        console.error(`TUI Router Error: Validation error: ${er.message}`);
         return;
     }
     // Click event
@@ -43,7 +64,7 @@ export function routerStart(routeList) {
                 const href = event.target.getAttribute('href');
                 const target = event.target.getAttribute('target');
                 // If the client side route does not exist, send the request to the server.
-                if (!routeList[href]) {
+                if (!routeList[href] && !redirectList[href]) {
                     return;
                 }
                 // If the URL begins with '#', ignore routing and scroll to link location on page
@@ -60,28 +81,28 @@ export function routerStart(routeList) {
                 }
                 event.preventDefault();
                 history.pushState({}, '', href);
-                handleRoute(routeList);
+                handleRoute(routeList, redirectList);
             }
             return;
         } catch (er) {
-            throw new Error(`TUI-Router: Link handling error: ${er.message}`);
+            throw new Error(`TUI Router Error: Link handling error: ${er.message}`);
         }
     });
     // Navigation Event
     window.onpopstate = function () {
         try {
-            handleRoute(routeList);
+            handleRoute(routeList, redirectList);
             return;
         } catch (er) {
-            throw new Error(`TUI-Router: Window onpopstate error: ${er.message}`)
+            throw new Error(`TUI Router Error: Window onpopstate error: ${er.message}`)
         }
     };
     // Initial Route
     try {
-        handleRoute(routeList);
+        handleRoute(routeList, redirectList);
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: ${er.message}`)
+        throw new Error(`TUI Router Error: ${er.message}`)
     }
 }
 
@@ -91,20 +112,33 @@ export function routerStart(routeList) {
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-function handleRoute(routeList) {
+function handleRoute(routeList, redirectList, visitedPaths = new Set()) {
     try {
-        const path = sanitizePath(window.location.pathname); 
+        const path = sanitizePath(window.location.pathname);
         if (!history.state) { // Redirect to home path if there is no history (Initial page load)
             history.replaceState({}, '', path);
+        }
+        if (redirectList?.[path]) {
+            if (visitedPaths.has(path)) {
+                console.error(`Infinite redirect detected for path: ${path}`);
+                history.pushState({}, '', '/');
+                handleRoute(routeList, redirectList);
+            }
+            visitedPaths.add(path);
+            const newPath = redirectList[path];
+            history.pushState({}, '', newPath);
+            handleRoute(routeList, redirectList, visitedPaths);
+            return;
         }
         const routeFunction = routeList[path]; // Locates the path in the 'routeList' object
         if (routeFunction) { // If the route exists call route function
             routeFunction(); // Call route function that corresponds to 'routeHandler' variable
+            visitedPaths.clear();
             return;
         }
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: ${er.message}`)
+        throw new Error(`TUI Router Error: ${er.message}`)
     }
 }
 
@@ -121,7 +155,7 @@ function handleNewTab(route) {
         newTab.location.href = newUrl;
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: New Tab Handler Error: ${er.message}`)
+        throw new Error(`TUI Router Error: New Tab Handler Error: ${er.message}`)
     }
 }
 
@@ -140,7 +174,7 @@ function handleAnchorTag(href) {
         }
         return;
     } catch (er) {
-        throw new Error(`TUI-Router: Anchor Tag Handler Error: ${er.message}`)
+        throw new Error(`TUI Router Error: Anchor Tag Handler Error: ${er.message}`)
     }
 }
 

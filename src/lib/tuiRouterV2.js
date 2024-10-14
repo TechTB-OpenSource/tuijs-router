@@ -27,9 +27,11 @@ import { checkIsObject } from "tuijs-util";
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-export function routerStartV2(RouteListObject) {
+export function routerStartV2(RouteListObject = null) {
     let routeList = {};
-    addRoute(RouteListObject);
+    if (RouteListObject !== null) {
+        addRoute(RouteListObject);   
+    }
     // Click event listener
     document.addEventListener('click', function (event) {
         try {
@@ -142,6 +144,11 @@ export function routerStartV2(RouteListObject) {
         return path.replace(/\/+$/, '');
     }
 
+    function redirect(newRoute) {
+        handleRoute(newRoute);
+        return;
+    }
+
     function addRoute(routeObject) {
         try {
             if (!checkIsObject(routeObject)) {
@@ -177,6 +184,7 @@ export function routerStartV2(RouteListObject) {
     }
 
     return {
+        redirect,
         addRoute,
         removeRoute
     }
