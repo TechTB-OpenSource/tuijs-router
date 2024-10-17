@@ -54,8 +54,7 @@ export function routerStart(routeList, redirectList = null) {
             });
         }
     } catch (er) {
-        console.error(`TUI Router Error: Validation error: ${er.message}`);
-        return;
+        throw new Error(`TUI Router: Validation error: ${er.message}`);
     }
     // Click event
     document.addEventListener('click', function (event) {
@@ -85,7 +84,7 @@ export function routerStart(routeList, redirectList = null) {
             }
             return;
         } catch (er) {
-            throw new Error(`TUI Router Error: Link handling error: ${er.message}`);
+            throw new Error(`TUI Router: Link Handling Error: ${er.message}`);
         }
     });
     // Navigation Event
@@ -94,7 +93,7 @@ export function routerStart(routeList, redirectList = null) {
             handleRoute(routeList, redirectList);
             return;
         } catch (er) {
-            throw new Error(`TUI Router Error: Window onpopstate error: ${er.message}`)
+            throw new Error(`TUI Router: Window Pop State Error: ${er.message}`);
         }
     };
     // Initial Route
@@ -102,7 +101,7 @@ export function routerStart(routeList, redirectList = null) {
         handleRoute(routeList, redirectList);
         return;
     } catch (er) {
-        throw new Error(`TUI Router Error: ${er.message}`)
+        throw new Error(`TUI Router: Initial Route Error: ${er.message}`);
     }
 }
 
@@ -138,7 +137,7 @@ function handleRoute(routeList, redirectList, visitedPaths = new Set()) {
         }
         return;
     } catch (er) {
-        throw new Error(`TUI Router Error: ${er.message}`)
+        throw new Error(`TUI Router: Route Handle Error: ${er.message}`)
     }
 }
 
@@ -155,7 +154,7 @@ function handleNewTab(route) {
         newTab.location.href = newUrl;
         return;
     } catch (er) {
-        throw new Error(`TUI Router Error: New Tab Handler Error: ${er.message}`)
+        throw new Error(`TUI Router: New Tab Handler Error: ${er.message}`);
     }
 }
 
@@ -174,13 +173,17 @@ function handleAnchorTag(href) {
         }
         return;
     } catch (er) {
-        throw new Error(`TUI Router Error: Anchor Tag Handler Error: ${er.message}`)
+        throw new Error(`TUI Router: Anchor Tag Handler Error: ${er.message}`);
     }
 }
 
 function sanitizePath(path) {
-    if (path === '/') {
-        return '/';
+    try {
+        if (path === '/') {
+            return '/';
+        }
+        return path.replace(/\/+$/, '');
+    } catch (er) {
+        throw new Error(`TUI Router: Path Sanitize Error: ${er.message}`);
     }
-    return path.replace(/\/+$/, '');
 }
