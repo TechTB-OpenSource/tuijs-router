@@ -1,6 +1,6 @@
 {
   "name": "tuijs-router",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "A simple and easy to use client-side router for JavaScript.",
   "main": "src/index.js",
   "author": "TechTB",
@@ -8,6 +8,6 @@
   "repository": "github:TechTB-OpenSource/tuijs-router",
   "type": "module",
   "dependencies": {
-    "tuijs-util": "^1.3.2"
+    "tuijs-util": "^1.3.4"
   }
 }
