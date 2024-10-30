@@ -1,31 +1,12 @@
 import { checkIsObject } from "tuijs-util";
 
 /**
- * @typedef {Object} RouteList - An object consisting of route paths and their corresponding route functions.
- * @property {string} route - The path of the desired server route.
- * @property {Function} routeFunction - The function to handle the route.
- * @property {Object<string, Function>} routes - A mapping of route paths to route functions.
- */
-
-/**
- * @typedef {Object} MetaData - A list of meta data attribute pairs.
- * @property {string} attributeKey - The key of the meta tag attribute.
- * @property {string} attributeValue - The value of the meta tag attribute.
- * @property {Array<Object.<string, string>>} attributes - A list of objects, where each object represents a single meta tag attribute key/value pair.
- */
-
-/**
- * @typedef {Object} SiteRouteData - The site or route data object.
- * @property {string} title - The site or route title.
- * @property {MetaData[]} meta - The meta data for the site or route.
- */
-
-/**
  * Starts the routing of a single page JavaScript application.
  * Intercepts navigation events in order to allow for client-side routing.
- * @param {RouteList} routeList - List of route paths and their corresponding route functions.
+ * @param {Array} routeList - An array of objects consisting of route paths and their corresponding route functions.
+ * @param {Array} redirectList - An array of objects consisting of route paths and their corresponding redirect target.
  * @returns {void}
- * @throws {Error} - If an error occurs.
+ * @throws {Error} - Throws an error if an error occurs.
  */
 export function routerStart(routeList, redirectList = null) {
     try {
@@ -54,14 +35,15 @@ export function routerStart(routeList, redirectList = null) {
             });
         }
     } catch (er) {
-        throw new Error(`TUI Router: Validation error: ${er.message}`);
+        throw new Error(`TUI Router: Parameter validation error: ${er.message}`);
     }
     // Click event
     document.addEventListener('click', function (event) {
         try {
-            if (event.target.tagName === 'A') {
-                const href = event.target.getAttribute('href');
-                const target = event.target.getAttribute('target');
+            const anchor = event.target.closest('a'); // Find the closest <a> element
+            if (anchor) {
+                const href = anchor.getAttribute('href');
+                const target = anchor.getAttribute('target');
                 // If the client side route does not exist, send the request to the server.
                 if (!routeList[href] && !redirectList[href]) {
                     return;
