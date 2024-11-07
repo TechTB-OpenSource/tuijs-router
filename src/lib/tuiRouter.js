@@ -44,14 +44,18 @@ export function routerStart(routeList, redirectList = null) {
             if (anchor) {
                 const href = anchor.getAttribute('href');
                 const target = anchor.getAttribute('target');
-                // If the client side route does not exist, send the request to the server.
-                if (!routeList[href] && !redirectList[href]) {
+                // If the URL begins with a modifier, ignore client side routing - MUST COME BEFORE ROUTE CHECK
+                if (target === '_self') {
                     return;
                 }
-                // If the URL begins with '#', ignore routing and scroll to link location on page
+                // If the URL begins with '#', ignore routing and scroll to link location on page - MUST COME BEFORE ROUTE CHECK
                 if (href.startsWith('#')) {
                     event.preventDefault();
                     handleAnchorTag(href);
+                    return;
+                }
+                // If the client side route does not exist, send the request to the server.
+                if (!routeList[href] && !redirectList[href]) {
                     return;
                 }
                 // If the target is blank, routing is used to open the page in a new tab
