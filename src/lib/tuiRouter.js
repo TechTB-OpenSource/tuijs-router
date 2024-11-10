@@ -55,7 +55,7 @@ export function routerStart(routeList, redirectList = null) {
                     return;
                 }
                 // If the client side route does not exist, send the request to the server.
-                if (!routeList[href] && !redirectList[href]) {
+                if (!routeList[href] && !redirectList?.[href]) {
                     return;
                 }
                 // If the target is blank, routing is used to open the page in a new tab
