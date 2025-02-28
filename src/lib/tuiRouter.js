@@ -8,7 +8,7 @@ import { checkIsObject } from "tuijs-util";
  * @returns {void}
  * @throws {Error} - Throws an error if an error occurs.
  */
-export function routerStart(routeList, redirectList = null) {
+export function routerStart(routeList, routeNotFound = { server: false, path: '/404' }, redirectList = null) {
     try {
         if (!checkIsObject(routeList)) {
             throw new Error(`The provided routeList list is not the type 'Object'.`);
@@ -21,6 +21,15 @@ export function routerStart(routeList, redirectList = null) {
                 throw new Error(`The provided route value for "${key}" must be a function.`);
             }
         });
+        if (!checkIsObject(routeNotFound)) {
+            throw new Error(`The provided routeNotFound variable is not the type 'Object'.`);
+        }
+        if (!routeNotFound.server || typeof routeNotFound.server !== "boolean") {
+            throw new Error(`The provided routeNotFound key "server" is missing or is not the type "boolean".`);
+        }
+        if (!routeNotFound.path || typeof routeNotFound.path !== "string") {
+            throw new Error(`The provided routeNotFound key "path" is missing or is not the type "string".`);
+        }
         if (redirectList !== null) {
             if (!checkIsObject(redirectList)) {
                 throw new Error(`The provided routeList list is not the type 'Object'.`);
@@ -34,60 +43,77 @@ export function routerStart(routeList, redirectList = null) {
                 }
             });
         }
-    } catch (er) {
-        throw new Error(`TUI Router: Parameter validation error: ${er.message}`);
-    }
-    // Click event
-    document.addEventListener('click', function (event) {
-        try {
-            const anchor = event.target.closest('a'); // Find the closest <a> element
-            if (anchor) {
-                const href = anchor.getAttribute('href');
-                const target = anchor.getAttribute('target');
-                // If the URL begins with a modifier, ignore client side routing - MUST COME BEFORE ROUTE CHECK
-                if (target === '_self') {
-                    return;
-                }
-                // If the URL begins with '#', ignore routing and scroll to link location on page - MUST COME BEFORE ROUTE CHECK
-                if (href.startsWith('#')) {
-                    event.preventDefault();
-                    handleAnchorTag(href);
-                    return;
-                }
-                // If the client side route does not exist, send the request to the server.
-                if (!routeList[href] && !redirectList?.[href]) {
-                    return;
-                }
-                // If the target is blank, routing is used to open the page in a new tab
-                if (target === '_blank') {
-                    event.preventDefault();
-                    handleNewTab(href);
-                    return;
-                }
-                event.preventDefault();
-                history.pushState({}, '', href);
-                handleRoute(routeList, redirectList);
-            }
-            return;
-        } catch (er) {
-            throw new Error(`TUI Router: Link Handling Error: ${er.message}`);
-        }
-    });
-    // Navigation Event
-    window.onpopstate = function () {
-        try {
-            handleRoute(routeList, redirectList);
-            return;
-        } catch (er) {
-            throw new Error(`TUI Router: Window Pop State Error: ${er.message}`);
-        }
-    };
-    // Initial Route
-    try {
-        handleRoute(routeList, redirectList);
+        addEventListeners(routeList, redirectList);
+        // Initial route
+        handleRoute(routeList, routeNotFound, redirectList);
         return;
     } catch (er) {
-        throw new Error(`TUI Router: Initial Route Error: ${er.message}`);
+        console.error(`TUI Router: Initial Route Error`);
+        console.error(er);
+        return;
+    }
+}
+
+function addEventListeners(routeList, routeNotFound, redirectList) {
+    try {
+        // Event listener for click event
+        document.addEventListener('click', function (event) {
+            try {
+                const anchor = event.target.closest('a'); // Find the closest <a> element
+                if (anchor) {
+                    const href = anchor.getAttribute('href');
+                    const target = anchor.getAttribute('target');
+                    // If the target is '_self' or the link is an outside link, ignore client side routing
+                    if (
+                        target === '_self' || 
+                        href.startsWith('http://') ||
+                        href.startsWith('https://') ||
+                        href.startsWith('ftp://') ||
+                        href.startsWith('file://') ||
+                        href.startsWith('ws://') ||
+                        href.startsWith('wss://') ||
+                        href.startsWith('tel:') || 
+                        href.startsWith('mailto:')
+                    ) {
+                        return;
+                    }
+                    // If the URL begins with '#', ignore routing and scroll to link location on page
+                    if (href.startsWith('#')) {
+                        event.preventDefault();
+                        handleAnchorTag(href);
+                        return;
+                    }
+                    // If the target is blank, routing is used to open the page in a new tab
+                    if (target === '_blank') {
+                        event.preventDefault();
+                        handleNewTab(href);
+                        return;
+                    }
+                    event.preventDefault();
+                    history.pushState({}, '', href);
+                    handleRoute(routeList, routeNotFound, redirectList);
+                }
+                return;
+            } catch (er) {
+                console.error(`TUI Router: Link Handling Error`);
+                console.error(er);
+                return;
+            }
+        });
+        // Navigation Event
+        window.onpopstate = function () {
+            try {
+                handleRoute(routeList, routeNotFound, redirectList);
+                return;
+            } catch (er) {
+                console.error(`TUI Router: Window Pop State Error`);
+                console.error(er);
+                return;
+            }
+        };
+    } catch (er) {
+        console.error(er);
+        return;
     }
 }
 
@@ -97,33 +123,56 @@ export function routerStart(routeList, redirectList = null) {
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
-function handleRoute(routeList, redirectList, visitedPaths = new Set()) {
+function handleRoute(routeList, routeNotFound, redirectList, visitedPaths = new Set()) {
     try {
-        const path = sanitizePath(window.location.pathname);
-        if (!history.state) { // Redirect to home path if there is no history (Initial page load)
+        let path = sanitizePath(window.location.pathname);
+        // If there is no history add update history (Initial page load)
+        if (!history.state) {
             history.replaceState({}, '', path);
         }
+        // If the client side route does not exist, use route not found handler.
+        if (!routeList[path] && !redirectList?.[path]) {
+            path = handleRouteNotFound(routeNotFound);
+        }
+        // Check for infinite route loop
         if (redirectList?.[path]) {
             if (visitedPaths.has(path)) {
                 console.error(`Infinite redirect detected for path: ${path}`);
                 history.pushState({}, '', '/');
-                handleRoute(routeList, redirectList);
+                handleRoute(routeList, routeNotFound, redirectList);
             }
             visitedPaths.add(path);
             const newPath = redirectList[path];
             history.pushState({}, '', newPath);
-            handleRoute(routeList, redirectList, visitedPaths);
+            handleRoute(routeList, routeNotFound, redirectList, visitedPaths);
             return;
         }
+        // If route is found and all validation is good, run client side route function.
         const routeFunction = routeList[path]; // Locates the path in the 'routeList' object
         if (routeFunction) { // If the route exists call route function
-            routeFunction(); // Call route function that corresponds to 'routeHandler' variable
+            routeFunction(); // Call route function that corresponds to 'routeList' variable
             visitedPaths.clear();
             return;
         }
         return;
     } catch (er) {
-        throw new Error(`TUI Router: Route Handle Error: ${er.message}`)
+        console.error(`TUI Router: Route Handling Error`);
+        console.error(er);
+        return;
+    }
+}
+
+function handleRouteNotFound(routeNotFound) {
+    try {
+        if (routeNotFound.server === true) {
+            window.location = routeNotFound.path;
+            return;
+        }
+        history.pushState({}, '', routeNotFound.path);
+        return routeNotFound.path;
+    } catch (er) {
+        console.error(er);
+        return;
     }
 }
 
@@ -140,7 +189,9 @@ function handleNewTab(route) {
         newTab.location.href = newUrl;
         return;
     } catch (er) {
-        throw new Error(`TUI Router: New Tab Handler Error: ${er.message}`);
+        console.error(`TUI Router: New Tab Route Handling Error`);
+        console.error(er);
+        return;
     }
 }
 
@@ -159,10 +210,18 @@ function handleAnchorTag(href) {
         }
         return;
     } catch (er) {
-        throw new Error(`TUI Router: Anchor Tag Handler Error: ${er.message}`);
+        console.error(`TUI Router: Anchor Tag Handler Error`);
+        console.error(er);
+        return;
     }
 }
 
+/**
+ * Removes trailing forward slashes from all paths except for the root path.
+ * @param {string} path - Path 
+ * @returns {string} - Returns path with trailing forward slashes removed.
+ * @throws {Error} - If an error occurs.
+ */
 function sanitizePath(path) {
     try {
         if (path === '/') {
@@ -170,6 +229,8 @@ function sanitizePath(path) {
         }
         return path.replace(/\/+$/, '');
     } catch (er) {
-        throw new Error(`TUI Router: Path Sanitize Error: ${er.message}`);
+        console.error(`TUI Router: Path Sanitize Error`);
+        console.error(er);
+        return;
     }
 }

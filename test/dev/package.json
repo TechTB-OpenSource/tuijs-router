@@ -1,7 +1,0 @@
-{
-    "name": "dev-server",
-    "main": "app.js",
-    "dependencies": {
-      "express": "*"
-    }
-}
