@@ -65,14 +65,14 @@ function addEventListeners(routeList, routeNotFound, redirectList) {
                     const target = anchor.getAttribute('target');
                     // If the target is '_self' or the link is an outside link, ignore client side routing
                     if (
-                        target === '_self' || 
+                        target === '_self' ||
                         href.startsWith('http://') ||
                         href.startsWith('https://') ||
                         href.startsWith('ftp://') ||
                         href.startsWith('file://') ||
                         href.startsWith('ws://') ||
                         href.startsWith('wss://') ||
-                        href.startsWith('tel:') || 
+                        href.startsWith('tel:') ||
                         href.startsWith('mailto:')
                     ) {
                         return;
@@ -211,6 +211,28 @@ function handleAnchorTag(href) {
         return;
     } catch (er) {
         console.error(`TUI Router: Anchor Tag Handler Error`);
+        console.error(er);
+        return;
+    }
+}
+
+function createRoute({ path, handlerFunction, exitFunction = null }) {
+    try {
+        if (typeof path !== 'string') {
+            throw new Error("Route 'path' must be a string");
+        }
+        if (typeof handlerFunction !== 'function') {
+            throw new Error("Route 'handlerFunction' must be a function");
+        }
+        if (typeof exitFunction !== 'function' && exitFunction !== null) {
+            throw new Error("Route 'exitFunction' must be a function");
+        }
+        return {
+            path,
+            handlerFunction,
+            exitFunction
+        };
+    } catch (er) {
         console.error(er);
         return;
     }
