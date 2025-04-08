@@ -58,7 +58,7 @@ import { tuiEvent } from "tuijs-event";
  * @property {RedirectList}
  */
 
-function createRouter() {
+export function createRouter() {
     const eventInstance = tuiEvent();
     /**
      * @type {RouterConfig}
@@ -68,6 +68,11 @@ function createRouter() {
         routeNotFound: { server: false, path: '/404' },
         redirectList: []
     }
+    /**
+     * @type {Object}
+     */
+    let activeRoute = {};
+
 
     //// DEV FUNCTIONS ////
 
@@ -129,20 +134,20 @@ function createRouter() {
      * @returns {Route}
      * @throws {Error} - Throws an error if an error occurs.
      */
-    function addRoute(path, handlerFunction, exitFunction = null) {
+    function addRoute(path, routeFunction, exitFunction = null) {
         try {
             if (typeof path !== 'string') {
                 throw new Error("Route 'path' must be a string");
             }
-            if (typeof handlerFunction !== 'function') {
-                throw new Error("Route 'handlerFunction' must be a function");
+            if (typeof routeFunction !== 'function') {
+                throw new Error("Route 'routeFunction' must be a function");
             }
             if (typeof exitFunction !== 'function' && exitFunction !== null) {
                 throw new Error("Route 'exitFunction' must be a function");
             }
             routerConfig['routeList'].push({
                 path: path,
-                handlerFunction: handlerFunction,
+                routeFunction: routeFunction,
                 exitFunction: exitFunction
             });
             return;
@@ -233,9 +238,8 @@ function createRouter() {
                 const href = anchor.getAttribute('href');
                 const target = anchor.getAttribute('target');
 
-                // If the target is '_self' or the link is an outside link, ignore client side routing
+                // If the target matches the below ignore client side routing
                 if (
-                    target === '_self' ||
                     href.startsWith('http://') ||
                     href.startsWith('https://') ||
                     href.startsWith('ftp://') ||
@@ -281,28 +285,33 @@ function createRouter() {
      */
     function handleRoute(targetRoute, visitedPaths = new Set()) {
         try {
+            const exitFunction = activeRoute['exitFunction'];
             const routeList = routerConfig['routeList'];
             const routeNotFound = routerConfig['routeNotFound'];
             const redirectList = routerConfig['redirectList'];
             // If targetRoute is null 
             if (targetRoute === null) {
                 targetRoute = sanitizePath(window.location.pathname);
+            }
+            // Check for infinite route loop
+            if (visitedPaths.has(targetRoute)) {
+                console.error(`Infinite redirect detected for path: ${targetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
+                handleRoute('/');
+            }
+            // If there is no history add update history (Initial page load)
+            if (!history.state) {
+                history.replaceState({}, '', targetRoute);
             } else {
                 history.pushState({}, '', targetRoute);
             }
-            // Check for infinite route loop
-            if (visitedPaths.has(targetPath)) {
-                console.error(`Infinite redirect detected for path: ${targetPath}`); // DO NOT throw error or end execution as that would break loop testing.
-                handleRoute('/');
+            // If there is an exit function, execute it.
+            if (exitFunction && typeof exitFunction === 'function') {
+                exitFunction();
             }
             const discoveredRoute = routeList.find(route => route['path'] === targetRoute);
             const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === targetRoute);
-            // If there is no history add update history (Initial page load)
-            if (!history.state) {
-                history.replaceState({}, '', targetPath);
-            }
             if (discoveredRedirect) {
-                visitedPaths.add(targetPath);
+                visitedPaths.add(targetRoute);
                 handleRoute(discoveredRedirect['toPath'], visitedPaths);
                 return;
 
@@ -310,19 +319,20 @@ function createRouter() {
             // If route is found
             if (discoveredRoute) {
                 const routeFunction = discoveredRoute['routeFunction']; // Attempts to store the route function
-                if (!typeof routeFunction === 'function') {
+                if (typeof routeFunction !== 'function') {
                     throw new Error(`The routeFunction value of this route MUST be a function.`);
                 }
                 routeFunction(); // Call route function that corresponds to 'routeList' variable
+                activeRoute = discoveredRoute;
                 visitedPaths.clear();
                 return;
             }
             // If no route is found
             if (routeNotFound['server'] === true) {
-                window.location = routeNotFound['path'];
+                window.location = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
                 return;
             }
-            visitedPaths.add(targetPath);
+            visitedPaths.add(targetRoute);
             handleRoute(routeNotFound['path'], visitedPaths);
             return;
         } catch (er) {
