@@ -1,3 +1,5 @@
+import { tuiEvent } from "tuijs-event";
+
 /**
  * let routeList = [
  *      {
@@ -57,6 +59,7 @@
  */
 
 function createRouter() {
+    const eventInstance = tuiEvent();
     /**
      * @type {RouterConfig}
      */
@@ -69,26 +72,23 @@ function createRouter() {
     //// DEV FUNCTIONS ////
 
     /**
-     * Starts the routing of a single page JavaScript application.
-     * Intercepts navigation events in order to allow for client-side routing.
-     * @param {routerConfig}
+     * Attaches window and document events for the router to function.
      * @returns {void}
-     * @throws {Error} - Throws an error if an error occurs.
      */
-    function routerStart() {
-        try {
-            const routeList = routerConfig['routeList'];
-            const routeNotFound = routerConfig['routeNotFound'];
-            const redirectList = routerConfig['redirectList'];
-            attachEventListeners(routeList, redirectList);
-            // Initial route
-            handleRoute(routeList, routeNotFound, redirectList);
-            return;
-        } catch (er) {
-            console.error(`TUI Router: Router start error`);
-            console.error(er);
-            return;
-        }
+    function start() {
+        eventInstance.addTrackedEvent(document, 'click', handleClickEvent); // Click Events
+        eventInstance.addTrackedEvent(window, 'popstate', function () { handleRoute(null) }); // Navigation Events
+        handleRoute(null); // Initial route
+        return;
+    }
+
+    /**
+     * Removes all event listeners to prevent stop the router.
+     * @returns {void}
+     */
+    function stop() {
+        eventInstance.removeAllTrackedEvents();
+        return;
     }
 
     /**
@@ -226,64 +226,48 @@ function createRouter() {
 
 
     //// UTILITY FUNCTIONS ////
-    function attachEventListeners(routeList, routeNotFound, redirectList) {
+    function handleClickEvent(event) {
         try {
-            // Event listener for click event
-            document.addEventListener('click', function (event) {
-                try {
-                    const anchor = event.target.closest('a'); // Find the closest <a> element
-                    if (anchor) {
-                        const href = anchor.getAttribute('href');
-                        const target = anchor.getAttribute('target');
-                        // If the target is '_self' or the link is an outside link, ignore client side routing
-                        if (
-                            target === '_self' ||
-                            href.startsWith('http://') ||
-                            href.startsWith('https://') ||
-                            href.startsWith('ftp://') ||
-                            href.startsWith('file://') ||
-                            href.startsWith('ws://') ||
-                            href.startsWith('wss://') ||
-                            href.startsWith('tel:') ||
-                            href.startsWith('mailto:')
-                        ) {
-                            return;
-                        }
-                        // If the URL begins with '#', ignore routing and scroll to link location on page
-                        if (href.startsWith('#')) {
-                            event.preventDefault();
-                            handleAnchorTag(href);
-                            return;
-                        }
-                        // If the target is blank, routing is used to open the page in a new tab
-                        if (target === '_blank') {
-                            event.preventDefault();
-                            handleNewTab(href);
-                            return;
-                        }
-                        event.preventDefault();
-                        history.pushState({}, '', href);
-                        handleRoute(routeList, routeNotFound, redirectList);
-                    }
-                    return;
-                } catch (er) {
-                    console.error(`TUI Router: Event Listener Error`);
-                    console.error(er);
+            const anchor = event.target.closest('a'); // Find the closest <a> element
+            if (anchor) {
+                const href = anchor.getAttribute('href');
+                const target = anchor.getAttribute('target');
+
+                // If the target is '_self' or the link is an outside link, ignore client side routing
+                if (
+                    target === '_self' ||
+                    href.startsWith('http://') ||
+                    href.startsWith('https://') ||
+                    href.startsWith('ftp://') ||
+                    href.startsWith('file://') ||
+                    href.startsWith('ws://') ||
+                    href.startsWith('wss://') ||
+                    href.startsWith('tel:') ||
+                    href.startsWith('mailto:')
+                ) {
                     return;
                 }
-            });
-            // Navigation Event
-            window.onpopstate = function () {
-                try {
-                    handleRoute(routeList, routeNotFound, redirectList);
-                    return;
-                } catch (er) {
-                    console.error(`TUI Router: Window Pop State Error`);
-                    console.error(er);
+
+                // If the URL begins with '#', ignore routing and call handleAnchorTag to scroll to link location on page
+                if (href.startsWith('#')) {
+                    event.preventDefault();
+                    handleAnchorTag(href);
                     return;
                 }
-            };
+
+                // If the target is blank, routing is used to open the page in a new tab
+                if (target === '_blank') {
+                    event.preventDefault();
+                    handleNewTab(href);
+                    return;
+                }
+
+                event.preventDefault();
+                handleRoute(href);
+            }
+            return;
         } catch (er) {
+            console.error(`TUI Router: Event Listener Error`);
             console.error(er);
             return;
         }
@@ -295,54 +279,54 @@ function createRouter() {
      * @returns {void}
      * @throws {Error} - If an error occurs.
      */
-    function handleRoute(routeList, routeNotFound, redirectList, visitedPaths = new Set()) {
+    function handleRoute(targetRoute, visitedPaths = new Set()) {
         try {
-            let path = sanitizePath(window.location.pathname);
-            // If there is no history add update history (Initial page load)
-            if (!history.state) {
-                history.replaceState({}, '', path);
-            }
-            // If the client side route does not exist, use route not found handler.
-            if (!routeList[path] && !redirectList?.[path]) {
-                path = handleRouteNotFound(routeNotFound);
+            const routeList = routerConfig['routeList'];
+            const routeNotFound = routerConfig['routeNotFound'];
+            const redirectList = routerConfig['redirectList'];
+            // If targetRoute is null 
+            if (targetRoute === null) {
+                targetRoute = sanitizePath(window.location.pathname);
+            } else {
+                history.pushState({}, '', targetRoute);
             }
             // Check for infinite route loop
-            if (redirectList?.[path]) {
-                if (visitedPaths.has(path)) {
-                    console.error(`Infinite redirect detected for path: ${path}`);
-                    history.pushState({}, '', '/');
-                    handleRoute(routeList, routeNotFound, redirectList);
-                }
-                visitedPaths.add(path);
-                const newPath = redirectList[path];
-                history.pushState({}, '', newPath);
-                handleRoute(routeList, routeNotFound, redirectList, visitedPaths);
-                return;
+            if (visitedPaths.has(targetPath)) {
+                console.error(`Infinite redirect detected for path: ${targetPath}`); // DO NOT throw error or end execution as that would break loop testing.
+                handleRoute('/');
             }
-            // If route is found and all validation is good, run client side route function.
-            const routeFunction = routeList[path]; // Locates the path in the 'routeList' object
-            if (routeFunction) { // If the route exists call route function
+            const discoveredRoute = routeList.find(route => route['path'] === targetRoute);
+            const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === targetRoute);
+            // If there is no history add update history (Initial page load)
+            if (!history.state) {
+                history.replaceState({}, '', targetPath);
+            }
+            if (discoveredRedirect) {
+                visitedPaths.add(targetPath);
+                handleRoute(discoveredRedirect['toPath'], visitedPaths);
+                return;
+
+            }
+            // If route is found
+            if (discoveredRoute) {
+                const routeFunction = discoveredRoute['routeFunction']; // Attempts to store the route function
+                if (!typeof routeFunction === 'function') {
+                    throw new Error(`The routeFunction value of this route MUST be a function.`);
+                }
                 routeFunction(); // Call route function that corresponds to 'routeList' variable
                 visitedPaths.clear();
                 return;
             }
+            // If no route is found
+            if (routeNotFound['server'] === true) {
+                window.location = routeNotFound['path'];
+                return;
+            }
+            visitedPaths.add(targetPath);
+            handleRoute(routeNotFound['path'], visitedPaths);
             return;
         } catch (er) {
             console.error(`TUI Router: Route Handling Error`);
-            console.error(er);
-            return;
-        }
-    }
-
-    function handleRouteNotFound(routeNotFoundObject) {
-        try {
-            if (routeNotFoundObject['server'] === true) {
-                window.location = routeNotFoundObject['path'];
-                return;
-            }
-            history.pushState({}, '', routeNotFoundObject['path']);
-            return routeNotFoundObject['path'];
-        } catch (er) {
             console.error(er);
             return;
         }
@@ -408,7 +392,8 @@ function createRouter() {
     }
 
     return {
-        routerStart,
+        start,
+        stop,
         getRouterConfig,
         getRouteList,
         getRouteNotFound,
