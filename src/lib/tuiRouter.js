@@ -1,27 +1,29 @@
 import { tuiEvent } from "tuijs-event";
 
 /**
+ * Data Example
+ * 
  * let routeList = [
  *      {
  *          path: '/',
  *          routeFunction: functionName,
  *          exitFunction: functionName,
  *      }
- * [
+ * ]
  * 
  * let routeNotFound = [
  *      {
  *          server: false,
  *          path: '/404'
  *      }
- * [
+ * ]
  * 
  * let redirectList = [
  *      {
  *          fromPath: '/old-path',
  *          toPath:  '/new-path'
  *      }
- * [
+ * ]
  */
 
 /**
@@ -173,6 +175,26 @@ export function createRouter() {
         }
     }
 
+    function replaceRoute(path, newRouteFunction, newExitFunction = null) {
+        try {
+            if (typeof path !== 'string') {
+                throw new Error("Route 'path' must be a string");
+            }
+            if (typeof newRouteFunction !== 'function') {
+                throw new Error("Route 'newRouteFunction' must be a function");
+            }
+            if (typeof newExitFunction !== 'function' && exitFunction !== null) {
+                throw new Error("Route 'newExitFunction' must be a function");
+            }
+            deleteRoute(path);
+            addRoute(path, newRouteFunction, newExitFunction);
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
     function setRouteNotFound(boolean, path) {
         try {
             if (typeof boolean !== 'boolean') {
@@ -237,7 +259,9 @@ export function createRouter() {
             if (anchor) {
                 const href = anchor.getAttribute('href');
                 const target = anchor.getAttribute('target');
-
+                if (!href) {
+                    throw new Error('Clicked link does not have an href attribute.')
+                };
                 // If the target matches the below ignore client side routing
                 if (
                     href.startsWith('http://') ||
@@ -296,7 +320,9 @@ export function createRouter() {
             // Check for infinite route loop
             if (visitedPaths.has(targetRoute)) {
                 console.error(`Infinite redirect detected for path: ${targetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
+                visitedPaths.clear();
                 handleRoute('/');
+                return;
             }
             // If there is no history add update history (Initial page load)
             if (!history.state) {
@@ -410,8 +436,10 @@ export function createRouter() {
         getRedirectList,
         addRoute,
         deleteRoute,
+        replaceRoute,
         setRouteNotFound,
         addRedirect,
-        deleteRedirect
+        deleteRedirect,
+        handleRoute
     }
 }
