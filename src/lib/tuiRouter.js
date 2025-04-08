@@ -6,7 +6,7 @@ import { tuiEvent } from "tuijs-event";
  * let routeList = [
  *      {
  *          path: '/',
- *          routeFunction: functionName,
+ *          enterFunction: functionName,
  *          exitFunction: functionName,
  *      }
  * ]
@@ -84,8 +84,8 @@ export function createRouter() {
      */
     function start() {
         eventInstance.addTrackedEvent(document, 'click', handleClickEvent); // Click Events
-        eventInstance.addTrackedEvent(window, 'popstate', function () { handleRoute(null) }); // Navigation Events
-        handleRoute(null); // Initial route
+        eventInstance.addTrackedEvent(window, 'popstate', function () { navigateTo(null) }); // Navigation Events
+        navigateTo(null); // Initial route
         return;
     }
 
@@ -136,20 +136,20 @@ export function createRouter() {
      * @returns {Route}
      * @throws {Error} - Throws an error if an error occurs.
      */
-    function addRoute(path, routeFunction, exitFunction = null) {
+    function addRoute(path, enterFunction, exitFunction = null) {
         try {
             if (typeof path !== 'string') {
                 throw new Error("Route 'path' must be a string");
             }
-            if (typeof routeFunction !== 'function') {
-                throw new Error("Route 'routeFunction' must be a function");
+            if (typeof enterFunction !== 'function') {
+                throw new Error("Route 'enterFunction' must be a function");
             }
             if (typeof exitFunction !== 'function' && exitFunction !== null) {
                 throw new Error("Route 'exitFunction' must be a function");
             }
             routerConfig['routeList'].push({
                 path: path,
-                routeFunction: routeFunction,
+                enterFunction: enterFunction,
                 exitFunction: exitFunction
             });
             return;
@@ -183,7 +183,7 @@ export function createRouter() {
             if (typeof newRouteFunction !== 'function') {
                 throw new Error("Route 'newRouteFunction' must be a function");
             }
-            if (typeof newExitFunction !== 'function' && exitFunction !== null) {
+            if (typeof newExitFunction !== 'function' && newExitFunction !== null) {
                 throw new Error("Route 'newExitFunction' must be a function");
             }
             deleteRoute(path);
@@ -291,7 +291,7 @@ export function createRouter() {
                 }
 
                 event.preventDefault();
-                handleRoute(href);
+                navigateTo(href);
             }
             return;
         } catch (er) {
@@ -307,7 +307,7 @@ export function createRouter() {
      * @returns {void}
      * @throws {Error} - If an error occurs.
      */
-    function handleRoute(targetRoute, visitedPaths = new Set()) {
+    function navigateTo(targetRoute, visitedPaths = new Set()) {
         try {
             const exitFunction = activeRoute['exitFunction'];
             const routeList = routerConfig['routeList'];
@@ -321,7 +321,7 @@ export function createRouter() {
             if (visitedPaths.has(targetRoute)) {
                 console.error(`Infinite redirect detected for path: ${targetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
                 visitedPaths.clear();
-                handleRoute('/');
+                navigateTo('/');
                 return;
             }
             // If there is no history add update history (Initial page load)
@@ -338,17 +338,17 @@ export function createRouter() {
             const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === targetRoute);
             if (discoveredRedirect) {
                 visitedPaths.add(targetRoute);
-                handleRoute(discoveredRedirect['toPath'], visitedPaths);
+                navigateTo(discoveredRedirect['toPath'], visitedPaths);
                 return;
 
             }
             // If route is found
             if (discoveredRoute) {
-                const routeFunction = discoveredRoute['routeFunction']; // Attempts to store the route function
-                if (typeof routeFunction !== 'function') {
-                    throw new Error(`The routeFunction value of this route MUST be a function.`);
+                const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route function
+                if (typeof enterFunction !== 'function') {
+                    throw new Error(`The enterFunction value of this route MUST be a function.`);
                 }
-                routeFunction(); // Call route function that corresponds to 'routeList' variable
+                enterFunction(); // Call route function that corresponds to 'routeList' variable
                 activeRoute = discoveredRoute;
                 visitedPaths.clear();
                 return;
@@ -359,7 +359,7 @@ export function createRouter() {
                 return;
             }
             visitedPaths.add(targetRoute);
-            handleRoute(routeNotFound['path'], visitedPaths);
+            navigateTo(routeNotFound['path'], visitedPaths);
             return;
         } catch (er) {
             console.error(`TUI Router: Route Handling Error`);
@@ -440,6 +440,6 @@ export function createRouter() {
         setRouteNotFound,
         addRedirect,
         deleteRedirect,
-        handleRoute
+        navigateTo
     }
 }
