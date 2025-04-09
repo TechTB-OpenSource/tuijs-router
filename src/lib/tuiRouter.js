@@ -4,20 +4,20 @@ import { checkIsArray, checkIsObject } from 'tuijs-util';
 /**
  * Data Example
  * 
- * route Example:
+ * route Object Example:
  *      {
  *          path: '/',
  *          enterFunction: functionName,
  *          exitFunction: functionName,
  *      }
  * 
- * routeNotFound Example:
+ * routeNotFound Object Example:
  *      {
  *          server: false,
  *          path: '/404'
  *      }
  * 
- * redirect Example:
+ * redirect Object Example:
  *      {
  *          fromPath: '/old-path',
  *          toPath:  '/new-path'
@@ -27,7 +27,7 @@ import { checkIsArray, checkIsObject } from 'tuijs-util';
 /**
  * @typedef {Object} Route
  * @property {string} path - The route path (e.g., '/about')
- * @property {function} handlerFunction - Function to run when the route matches
+ * @property {Function} handlerFunction - Function to run when the route matches
  * @property {Function|null} [exitFunction] - Optional function to run when exiting the route
  */
 
@@ -53,9 +53,9 @@ import { checkIsArray, checkIsObject } from 'tuijs-util';
 
 /**
  * @typedef {Object} RouterConfig
- * @property {RouteList}
- * @property {RouteNotFound}
- * @property {RedirectList}
+ * @property {Route[]} routeList - List of route definitions
+ * @property {RouteNotFound} routeNotFound - Handler for unknown routes
+ * @property {Redirect[]} redirectList - List of path redirects
  */
 
 export function createRouter() {
@@ -77,25 +77,40 @@ export function createRouter() {
     //// DEV FUNCTIONS ////
 
     /**
-     * Attaches window and document events for the router to function.
-     * @returns {void}
+     * Attaches window and document event listeners to start routing.
+     * @returns {boolean} Returns true on success and false on error.
      */
     function startRouter() {
-        eventInstance.addTrackedEvent(document, 'click', handleClickEvent); // Click Events
-        eventInstance.addTrackedEvent(window, 'popstate', function () { navigateTo(null) }); // Navigation Events
-        navigateTo(null); // Initial route
-        return;
+        try {
+            eventInstance.addTrackedEvent(document, 'click', handleClickEvent); // Click Events
+            eventInstance.addTrackedEvent(window, 'popstate', function () { navigateTo(location.pathname) }); // Navigation Events
+            navigateTo(null); // Initial route
+            return true;
+        } catch (er) {
+            console.error(er);
+            return false;
+        }
     }
 
     /**
      * Removes all event listeners to prevent stop the router.
-     * @returns {void}
+     * @returns {boolean} Returns true on success and false on error.
      */
     function stopRouter() {
-        eventInstance.removeAllTrackedEvents();
-        return;
+        try {
+            eventInstance.removeAllTrackedEvents();
+            return true;
+        } catch (er) {
+            console.error(er);
+            return false;
+        }
     }
 
+    /**
+     * Sets the routeList array in the routerConfig Object
+     * @param {RouteList} routeList - An Array containing route Objects
+     * @returns {boolean} Returns true on success and false on error.
+     */
     function setRouteList(routeList) {
         try {
             if (!checkIsArray(routeList)) {
@@ -117,18 +132,19 @@ export function createRouter() {
                 }
             }
             routerConfig['routeList'] = routeList;
-            return;
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
     /**
-     * Validates input and creates a Route Object within the routeList
-     * @param {Route} - A Route Object consisting of a path key/value pair, a handler Function key/value pair, and an optional exit Function key/value pair
-     * @returns {Route}
-     * @throws {Error} - Throws an error if an error occurs.
+     * Creates a route Object within the routeList Array
+     * @param {string} path - The path of the new route
+     * @param {Function} enterFunction - The Function that will be executed when the route is navigated to.
+     * @param {Function} exitFunction - An option Function that will be executed when the route is navigated away from.
+     * @returns {boolean} Returns true on success and false on error.
      */
     function addRoute(path, enterFunction, exitFunction = null) {
         try {
@@ -146,13 +162,18 @@ export function createRouter() {
                 enterFunction: enterFunction,
                 exitFunction: exitFunction
             });
-            return;
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
+    /**
+     * Deletes all matching route Objects within the routeList Array based on input.
+     * @param {string} path - The path of the route to be deleted.
+     * @returns {boolean} Returns true on success and false on error.
+     */
     function deleteRoute(path) {
         try {
             if (typeof path !== 'string') {
@@ -163,32 +184,48 @@ export function createRouter() {
                     routerConfig['routeList'].splice(i, 1);
                 }
             }
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
-    function replaceRoute(path, newRouteFunction, newExitFunction = null) {
+    /**
+     * Replaces and existing route Object within the routeList Array
+     * @param {string} path - The path of the route to be replaced
+     * @param {Function} newEnterFunction - The Function that will be executed when the route is navigated to.
+     * @param {Function} newExitFunction - An option Function that will be executed when the route is navigated away from.
+     * @returns {boolean} Returns true on success and false on error.
+     */
+    function replaceRoute(path, newEnterFunction, newExitFunction = null) {
         try {
             if (typeof path !== 'string') {
                 throw new Error(`Route 'path' must be a string`);
             }
-            if (typeof newRouteFunction !== 'function') {
-                throw new Error(`Route 'newRouteFunction' must be a function`);
+            if (typeof newEnterFunction !== 'function') {
+                throw new Error(`Route 'newEnterFunction' must be a function`);
             }
             if (typeof newExitFunction !== 'function' && newExitFunction !== null) {
                 throw new Error(`Route 'newExitFunction' must be a function`);
             }
-            deleteRoute(path);
-            addRoute(path, newRouteFunction, newExitFunction);
-            return;
+            const index = routerConfig.routeList.findIndex(route => route['path'] === path);
+            if (index === -1) {
+                throw new Error(`The route does not exist in the routerConfig routeList.`);
+            }
+            routerConfig.routeList[index] = { path, enterFunction: newEnterFunction, exitFunction: newExitFunction };
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
+    /**
+     * Sets the routeNotFound Object in the routerConfig Object
+     * @param {RouteNotFound} options - An Object containing routeNotFound options
+     * @returns {boolean} Returns true on success and false on error.
+     */
     function setRouteNotFound(options) {
         try {
             if (!checkIsObject(options)) {
@@ -199,20 +236,25 @@ export function createRouter() {
                 throw new Error(`Unexpected properties provided: ${Object.keys(rest).join(', ')}`);
             }
             if (typeof server !== 'boolean') {
-                throw new Error('Provided value for "server" must be a boolean.');
+                throw new Error(`Provided value for 'server' must be a boolean.`);
             }
             if (typeof path !== 'string') {
-                throw new Error('Provided value for "path" must be a string.');
+                throw new Error(`Provided value for 'path' must be a string.`);
             }
             routerConfig['routeNotFound'] = { server, path };
-            return;
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
-    function addRedirectList(redirectList) {
+    /**
+     * Sets the redirectList Array in the routerConfig Object
+     * @param {RedirectList} redirectList - An Array containing redirectList Objects
+     * @returns {boolean} Returns true on success and false on error.
+     */
+    function setRedirectList(redirectList) {
         try {
             if (!checkIsArray(redirectList)) {
                 throw new Error(`The 'redirectList' must be an array.`);
@@ -226,13 +268,19 @@ export function createRouter() {
                 }
             }
             routerConfig['redirectList'] = redirectList;
-            return;
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
+    /**
+     * Creates a redirect Object within the routeList Array
+     * @param {string} fromPath - The path that should redirect from when targeted by navigation.
+     * @param {string} toPath - The path that should be redirected to.
+     * @returns {boolean} Returns true on success and false on error.
+     */
     function addRedirect(fromPath, toPath) {
         try {
             if (typeof fromPath !== 'string') {
@@ -245,14 +293,18 @@ export function createRouter() {
                 fromPath: fromPath,
                 toPath: toPath
             });
-            return;
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
-
+    /**
+     * Deletes all matching redirect Objects within the redirectList Array based on input.
+     * @param {string} fromPath - The fromPath string that will be matched to determine which Object(s) to delete.
+     * @returns {boolean} Returns true on success and false on error.
+     */
     function deleteRedirect(fromPath) {
         try {
             if (typeof fromPath !== 'string') {
@@ -263,17 +315,17 @@ export function createRouter() {
                     routerConfig['redirectList'].splice(i, 1);
                 }
             }
-            return;
+            return true;
         } catch (er) {
             console.error(er);
-            return;
+            return false;
         }
     }
 
     /**
- * Returns an routerConfig Object.
- * @returns {RouterConfig}
- */
+     * Returns an routerConfig Object.
+     * @returns {RouterConfig}
+     */
     function getRouterConfig() {
         return routerConfig;
     }
@@ -303,10 +355,11 @@ export function createRouter() {
     }
 
     /**
-     * Handles the routing logic of a given list based on the new window location.
-     * @param {string} targetRoute
+     * Handles the routing logic. This is the core of the router.
+     * @param {string} targetRoute - The route to navigate to.
+     * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
      * @returns {void}
-     * @throws {Error} - If an error occurs.
+     * @throws {Error} - If an error occurs during navigation.
      */
     async function navigateTo(targetRoute, visitedPaths = new Set()) {
         try {
@@ -319,9 +372,15 @@ export function createRouter() {
                 targetRoute = window.location.pathname;
             }
             const sanitizedTargetRoute = sanitizePath(targetRoute);
+            if (visitedPaths.size > 20) {
+                console.error(`TUI Router: Maximum (20) redirects exceeded.`);
+                visitedPaths.clear();
+                return;
+            }
             // Check for infinite route loop
             if (visitedPaths.has(sanitizedTargetRoute)) {
-                console.error(`Infinite redirect detected for path: ${sanitizedTargetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
+                console.error(`TUI Router: Infinite redirect detected for path: ${sanitizedTargetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
+                console.error(`Visited Paths: ${visitedPaths}`)
                 visitedPaths.clear();
                 navigateTo('/');
                 return;
@@ -329,11 +388,13 @@ export function createRouter() {
             // If there is no history add update history (Initial page load)
             if (!history.state) {
                 history.replaceState({}, '', sanitizedTargetRoute);
-            } else {
-                history.pushState({}, '', sanitizedTargetRoute);
             }
             // If there is an exit function, execute it.
-            if (exitFunction && typeof exitFunction === 'function') {
+            if (exitFunction) {
+                if (typeof exitFunction !== 'function') {
+                    console.error(`TUI Router: The exitFunction value of this route MUST be a function.`); // Allows the error to be non blocking
+                    return;
+                }
                 await exitFunction();
             }
             const discoveredRoute = routeList.find(route => route['path'] === sanitizedTargetRoute);
@@ -348,13 +409,15 @@ export function createRouter() {
             if (discoveredRoute) {
                 const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route function
                 if (typeof enterFunction !== 'function') {
-                    throw new Error(`The enterFunction value of this route MUST be a function.`);
+                    console.error(`The enterFunction value of this route MUST be a function.`); // Allows the error to be non blocking
+                    return;
                 }
                 await enterFunction(); // Call route function that corresponds to 'routeList' variable
                 activeRoute = discoveredRoute;
                 visitedPaths.clear();
                 return;
             }
+            history.pushState({}, '', sanitizedTargetRoute);
             // If no route is found
             if (routeNotFound['server'] === true) {
                 window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
@@ -492,7 +555,7 @@ export function createRouter() {
         deleteRoute,
         replaceRoute,
         setRouteNotFound,
-        addRedirectList,
+        setRedirectList,
         addRedirect,
         deleteRedirect,
         getRouterConfig,
