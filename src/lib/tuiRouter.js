@@ -1,29 +1,27 @@
-import { tuiEvent } from "tuijs-event";
+import { tuiEvent } from 'tuijs-event';
+import { checkIsArray, checkIsObject } from 'tuijs-util';
 
 /**
  * Data Example
  * 
- * let routeList = [
+ * route Example:
  *      {
  *          path: '/',
  *          enterFunction: functionName,
  *          exitFunction: functionName,
  *      }
- * ]
  * 
- * let routeNotFound = [
+ * routeNotFound Example:
  *      {
  *          server: false,
  *          path: '/404'
  *      }
- * ]
  * 
- * let redirectList = [
+ * redirect Example:
  *      {
  *          fromPath: '/old-path',
  *          toPath:  '/new-path'
  *      }
- * ]
  */
 
 /**
@@ -82,7 +80,7 @@ export function createRouter() {
      * Attaches window and document events for the router to function.
      * @returns {void}
      */
-    function start() {
+    function startRouter() {
         eventInstance.addTrackedEvent(document, 'click', handleClickEvent); // Click Events
         eventInstance.addTrackedEvent(window, 'popstate', function () { navigateTo(null) }); // Navigation Events
         navigateTo(null); // Initial route
@@ -93,15 +91,189 @@ export function createRouter() {
      * Removes all event listeners to prevent stop the router.
      * @returns {void}
      */
-    function stop() {
+    function stopRouter() {
         eventInstance.removeAllTrackedEvents();
         return;
     }
 
+    function addRouteList(routeList) {
+        try {
+            if (!checkIsArray(routeList)) {
+                throw new Error(`The 'routeList' must be an array.`);
+            }
+            for (let i = 0; i < routeList.length; i++) {
+                const { path, enterFunction, exitFunction, ...rest } = routeList[i];
+                if (Object.keys(rest).length > 0) {
+                    throw new Error(`Unexpected properties provided at index ${i}: ${Object.keys(rest).join(', ')}`);
+                }
+                if (typeof routeList[i]['path'] !== 'string') {
+                    throw new Error(`The route path at index ${i}  must be a string.`);
+                }
+                if (typeof routeList[i]['enterFunction'] !== 'function') {
+                    throw new Error(`The route enterFunction at index ${i} must be a function.`);
+                }
+                if (typeof routeList[i]['exitFunction'] !== 'function' && exitFunction !== null) {
+                    throw new Error(`The route exitFunction at index ${i} must be a function or null.`);
+                }
+            }
+            routerConfig['routeList'] = routeList;
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
     /**
-     * Returns an routerConfig Object.
-     * @returns {RouterConfig}
+     * Validates input and creates a Route Object within the routeList
+     * @param {Route} - A Route Object consisting of a path key/value pair, a handler Function key/value pair, and an optional exit Function key/value pair
+     * @returns {Route}
+     * @throws {Error} - Throws an error if an error occurs.
      */
+    function addRoute(path, enterFunction, exitFunction = null) {
+        try {
+            if (typeof path !== 'string') {
+                throw new Error(`Route 'path' must be a string`);
+            }
+            if (typeof enterFunction !== 'function') {
+                throw new Error(`Route 'enterFunction' must be a function`);
+            }
+            if (typeof exitFunction !== 'function' && exitFunction !== null) {
+                throw new Error(`Route 'exitFunction' must be a function`);
+            }
+            routerConfig['routeList'].push({
+                path: path,
+                enterFunction: enterFunction,
+                exitFunction: exitFunction
+            });
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
+    function deleteRoute(path) {
+        try {
+            if (typeof path !== 'string') {
+                throw new Error(`Route 'path' must be a string`);
+            }
+            for (let i = routerConfig['routeList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
+                if (routerConfig['routeList'][i]['path'] === path) {
+                    routerConfig['routeList'].splice(i, 1);
+                }
+            }
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
+    function replaceRoute(path, newRouteFunction, newExitFunction = null) {
+        try {
+            if (typeof path !== 'string') {
+                throw new Error(`Route 'path' must be a string`);
+            }
+            if (typeof newRouteFunction !== 'function') {
+                throw new Error(`Route 'newRouteFunction' must be a function`);
+            }
+            if (typeof newExitFunction !== 'function' && newExitFunction !== null) {
+                throw new Error(`Route 'newExitFunction' must be a function`);
+            }
+            deleteRoute(path);
+            addRoute(path, newRouteFunction, newExitFunction);
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
+    function setRouteNotFound(options) {
+        try {
+            if (!checkIsObject(options)) {
+                throw new Error('Input must be an object.');
+            }
+            const { server, path, ...rest } = options;
+            if (Object.keys(rest).length > 0) {
+                throw new Error(`Unexpected properties provided: ${Object.keys(rest).join(', ')}`);
+            }
+            if (typeof server !== 'boolean') {
+                throw new Error('Provided value for "server" must be a boolean.');
+            }
+            if (typeof path !== 'string') {
+                throw new Error('Provided value for "path" must be a string.');
+            }
+            routerConfig['routeNotFound'] = { server, path };
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
+    function addRedirectList(redirectList) {
+        try {
+            if (!checkIsArray(redirectList)) {
+                throw new Error(`The 'redirectList' must be an array.`);
+            }
+            for (let i = 0; i < redirectList.length; i++) {
+                if (typeof redirectList[i]['fromPath'] !== 'string') {
+                    throw new Error(`The fromPath at index '${i}'  must be a string.`);
+                }
+                if (typeof redirectList[i]['toPath'] !== 'string') {
+                    throw new Error(`The toPath at index '${i}'  must be a string.`);
+                }
+            }
+            routerConfig['redirectList'] = redirectList;
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
+    function addRedirect(fromPath, toPath) {
+        try {
+            if (typeof fromPath !== 'string') {
+                throw new Error('The redirect fromPath must be a string');
+            }
+            if (typeof toPath !== 'string') {
+                throw new Error('The redirect toPath must be a string');
+            }
+            routerConfig['redirectList'].push({
+                fromPath: fromPath,
+                toPath: toPath
+            });
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
+
+    function deleteRedirect(fromPath) {
+        try {
+            if (typeof fromPath !== 'string') {
+                throw new Error(`Route 'path' must be a string`);
+            }
+            for (let i = routerConfig['redirectList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
+                if (routerConfig['redirectList'][i]['fromPath'] === fromPath) {
+                    routerConfig['redirectList'].splice(i, 1);
+                }
+            }
+            return;
+        } catch (er) {
+            console.error(er);
+            return;
+        }
+    }
+
+    /**
+ * Returns an routerConfig Object.
+ * @returns {RouterConfig}
+ */
     function getRouterConfig() {
         return routerConfig;
     }
@@ -129,128 +301,6 @@ export function createRouter() {
     function getRedirectList() {
         return routerConfig['redirectList'];
     }
-
-    /**
-     * Validates input and creates a Route Object within the routeList
-     * @param {Route} - A Route Object consisting of a path key/value pair, a handler Function key/value pair, and an optional exit Function key/value pair
-     * @returns {Route}
-     * @throws {Error} - Throws an error if an error occurs.
-     */
-    function addRoute(path, enterFunction, exitFunction = null) {
-        try {
-            if (typeof path !== 'string') {
-                throw new Error("Route 'path' must be a string");
-            }
-            if (typeof enterFunction !== 'function') {
-                throw new Error("Route 'enterFunction' must be a function");
-            }
-            if (typeof exitFunction !== 'function' && exitFunction !== null) {
-                throw new Error("Route 'exitFunction' must be a function");
-            }
-            routerConfig['routeList'].push({
-                path: path,
-                enterFunction: enterFunction,
-                exitFunction: exitFunction
-            });
-            return;
-        } catch (er) {
-            console.error(er);
-            return;
-        }
-    }
-
-    function deleteRoute(path) {
-        try {
-            if (typeof path !== 'string') {
-                throw new Error("Route 'path' must be a string");
-            }
-            for (let i = routerConfig['routeList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
-                if (routerConfig['routeList'][i]['path'] === path) {
-                    routerConfig['routeList'].splice(i, 1);
-                }
-            }
-        } catch (er) {
-            console.error(er);
-            return;
-        }
-    }
-
-    function replaceRoute(path, newRouteFunction, newExitFunction = null) {
-        try {
-            if (typeof path !== 'string') {
-                throw new Error("Route 'path' must be a string");
-            }
-            if (typeof newRouteFunction !== 'function') {
-                throw new Error("Route 'newRouteFunction' must be a function");
-            }
-            if (typeof newExitFunction !== 'function' && newExitFunction !== null) {
-                throw new Error("Route 'newExitFunction' must be a function");
-            }
-            deleteRoute(path);
-            addRoute(path, newRouteFunction, newExitFunction);
-            return;
-        } catch (er) {
-            console.error(er);
-            return;
-        }
-    }
-
-    function setRouteNotFound(boolean, path) {
-        try {
-            if (typeof boolean !== 'boolean') {
-                throw new Error('Provided value for server directed route must be a boolean.');
-            }
-            if (typeof path !== 'string') {
-                throw new Error('Provided path value must be a string.')
-            }
-            routerConfig['routeNotFound'] = {
-                server: boolean,
-                path: path
-            }
-            return;
-        } catch (er) {
-            console.error(er);
-            return;
-        }
-    }
-
-    function addRedirect(fromPath, toPath) {
-        try {
-            if (typeof fromPath !== 'string') {
-                throw new Error("The redirect fromPath must be a string");
-            }
-            if (typeof toPath !== 'string') {
-                throw new Error("The redirect toPath must be a string");
-            }
-            routerConfig['redirectList'].push({
-                fromPath: fromPath,
-                toPath: toPath
-            });
-            return;
-        } catch (er) {
-            console.error(er);
-            return;
-        }
-    }
-
-
-    function deleteRedirect(fromPath) {
-        try {
-            if (typeof fromPath !== 'string') {
-                throw new Error("Route 'path' must be a string");
-            }
-            for (let i = routerConfig['redirectList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
-                if (routerConfig['redirectList'][i]['fromPath'] === fromPath) {
-                    routerConfig['redirectList'].splice(i, 1);
-                }
-            }
-            return;
-        } catch (er) {
-            console.error(er);
-            return;
-        }
-    }
-
 
     //// UTILITY FUNCTIONS ////
     function handleClickEvent(event) {
@@ -398,7 +448,7 @@ export function createRouter() {
         try {
             let elmId = document.getElementById(href.slice(1));
             if (elmId) {
-                elmId.scrollIntoView({ behavior: "smooth" });
+                elmId.scrollIntoView({ behavior: 'smooth' });
             }
             return;
         } catch (er) {
@@ -428,18 +478,20 @@ export function createRouter() {
     }
 
     return {
-        start,
-        stop,
-        getRouterConfig,
-        getRouteList,
-        getRouteNotFound,
-        getRedirectList,
+        startRouter,
+        stopRouter,
+        addRouteList,
         addRoute,
         deleteRoute,
         replaceRoute,
         setRouteNotFound,
+        addRedirectList,
         addRedirect,
         deleteRedirect,
+        getRouterConfig,
+        getRouteList,
+        getRouteNotFound,
+        getRedirectList,
         navigateTo
     }
 }
