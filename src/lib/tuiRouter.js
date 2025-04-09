@@ -407,6 +407,7 @@ export function createRouter() {
             }
             // If route is found
             if (discoveredRoute) {
+                history.pushState({}, '', sanitizedTargetRoute);
                 const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route function
                 if (typeof enterFunction !== 'function') {
                     console.error(`The enterFunction value of this route MUST be a function.`); // Allows the error to be non blocking
@@ -417,7 +418,6 @@ export function createRouter() {
                 visitedPaths.clear();
                 return;
             }
-            history.pushState({}, '', sanitizedTargetRoute);
             // If no route is found
             if (routeNotFound['server'] === true) {
                 window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 

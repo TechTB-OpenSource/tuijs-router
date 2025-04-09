@@ -9,6 +9,6 @@
   "type": "module",
   "dependencies": {
     "tuijs-event": "^0.1.5",
-    "tuijs-util": "^1.4.1"
+    "tuijs-util": "^1.4.9"
   }
 }
