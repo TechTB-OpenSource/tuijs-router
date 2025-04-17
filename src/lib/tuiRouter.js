@@ -107,6 +107,130 @@ export function createRouter() {
     }
 
     /**
+     * Handles the routing logic. This is the core of the router.
+     * @param {string} targetRoute - The route to navigate to.
+     * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
+     * @returns {void}
+     * @throws {Error} - If an error occurs during navigation.
+     */
+    async function navigateTo(targetRoute, visitedPaths = new Set()) {
+        try {
+            const exitFunction = activeRoute['exitFunction'];
+            const routeList = routerConfig['routeList'];
+            const routeNotFound = routerConfig['routeNotFound'];
+            const redirectList = routerConfig['redirectList'];
+            // If targetRoute is null 
+            if (targetRoute === null) {
+                targetRoute = window.location.pathname;
+            }
+
+            const sanitizedTargetRoute = sanitizePath(targetRoute);
+            if (visitedPaths.size > 20) {
+                console.error(`TUI Router: Maximum (20) redirects exceeded.`);
+                visitedPaths.clear();
+                return;
+            }
+            // Check for infinite route loop
+            if (visitedPaths.has(sanitizedTargetRoute)) {
+                console.error(`TUI Router: Infinite redirect detected for path: ${sanitizedTargetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
+                console.error(`Visited Paths: ${visitedPaths}`)
+                visitedPaths.clear();
+                navigateTo('/');
+                return;
+            }
+            // If there is no history add update history (Initial page load)
+            if (!history.state) {
+                history.replaceState({}, '', sanitizedTargetRoute);
+            }
+            // If there is an exit function, execute it.
+            if (exitFunction) {
+                if (typeof exitFunction !== 'function') {
+                    console.error(`TUI Router: The exitFunction value of this route MUST be a function.`); // Allows the error to be non blocking
+                    return;
+                }
+                await exitFunction();
+            }
+
+            const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
+            if (discoveredRedirect) {
+                visitedPaths.add(sanitizedTargetRoute);
+                await navigateTo(discoveredRedirect['toPath'], visitedPaths);
+                return;
+            }
+
+            const findRouteResults = findRoute(sanitizedTargetRoute)
+            if (findRouteResults) {
+                const { discoveredRoute, params } = findRouteResults;
+                history.pushState({}, '', sanitizedTargetRoute);
+                const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route function
+                if (typeof enterFunction !== 'function') {
+                    console.error(`TUI Router: The enterFunction value of this route MUST be a function.`); // Allows the error to be non blocking
+                    return;
+                }
+                await enterFunction(params); // Call route function that corresponds to 'routeList' variable
+                activeRoute = discoveredRoute;
+                visitedPaths.clear();
+                return;
+            }
+            // If no route is found
+            if (routeNotFound['server'] === true) {
+                window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
+                return;
+            }
+            visitedPaths.add(sanitizedTargetRoute);
+            await navigateTo(routeNotFound['path'], visitedPaths);
+            return;
+        } catch (er) {
+            console.error(`TUI Router: Route Handling Error`);
+            console.error(er);
+            return;
+        }
+    }
+
+    function findRoute(sanitizedTargetRoute) {
+        const routeList = routerConfig['routeList'];
+        for (let i = 0; i < routeList.length; i++) {
+            const testRouteObject = routeList[i];
+            const testRoutePath = routeList[i]['path'];
+            const { discoveredRoute, params } = matchRoute(testRoutePath, sanitizedTargetRoute);
+            if (discoveredRoute) {
+                return { discoveredRoute: testRouteObject, params };
+            }
+        }
+        return null;
+    }
+
+    function matchRoute(testRoutePath, sanitizedTargetRoute) {
+        const params = {};
+        const testRouteParts = testRoutePath.split('/');
+        const targetRouteParts = sanitizedTargetRoute.split('/');
+        // Check if the path part counts are different. If so, then the routes don't match.
+        if (testRouteParts.length !== targetRouteParts.length) {
+            return { matches: false };
+        }
+        // Check each test path part
+        for (let i = 0; i < testRouteParts.length; i++) {
+            const testPart = testRouteParts[i];
+            const targetPart = targetRouteParts[i];
+
+            // If the test path part is dynamic (starts with :), move on to next loop cycle.
+            if (testPart.startsWith(':')) {
+                const paramName = testPart.slice(1);
+                params[paramName] = targetPart;
+                continue;
+            }
+            // If a test path part and a target route path part do not match, then the route does not match.
+            if (testPart !== targetPart) {
+                return { matches: false };
+            }
+        }
+
+        // If the test route passes all tests, true is returned.
+        return { matches: true, params };
+    }
+
+
+    /**
      * Sets the routeList array in the routerConfig Object
      * @param {RouteList} routeList - An Array containing route Objects
      * @returns {boolean} Returns true on success and false on error.
@@ -352,85 +476,6 @@ export function createRouter() {
      */
     function getRedirectList() {
         return routerConfig['redirectList'];
-    }
-
-    /**
-     * Handles the routing logic. This is the core of the router.
-     * @param {string} targetRoute - The route to navigate to.
-     * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
-     * @returns {void}
-     * @throws {Error} - If an error occurs during navigation.
-     */
-    async function navigateTo(targetRoute, visitedPaths = new Set()) {
-        try {
-            const exitFunction = activeRoute['exitFunction'];
-            const routeList = routerConfig['routeList'];
-            const routeNotFound = routerConfig['routeNotFound'];
-            const redirectList = routerConfig['redirectList'];
-            // If targetRoute is null 
-            if (targetRoute === null) {
-                targetRoute = window.location.pathname;
-            }
-            const sanitizedTargetRoute = sanitizePath(targetRoute);
-            if (visitedPaths.size > 20) {
-                console.error(`TUI Router: Maximum (20) redirects exceeded.`);
-                visitedPaths.clear();
-                return;
-            }
-            // Check for infinite route loop
-            if (visitedPaths.has(sanitizedTargetRoute)) {
-                console.error(`TUI Router: Infinite redirect detected for path: ${sanitizedTargetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
-                console.error(`Visited Paths: ${visitedPaths}`)
-                visitedPaths.clear();
-                navigateTo('/');
-                return;
-            }
-            // If there is no history add update history (Initial page load)
-            if (!history.state) {
-                history.replaceState({}, '', sanitizedTargetRoute);
-            }
-            // If there is an exit function, execute it.
-            if (exitFunction) {
-                if (typeof exitFunction !== 'function') {
-                    console.error(`TUI Router: The exitFunction value of this route MUST be a function.`); // Allows the error to be non blocking
-                    return;
-                }
-                await exitFunction();
-            }
-            const discoveredRoute = routeList.find(route => route['path'] === sanitizedTargetRoute);
-            const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
-            if (discoveredRedirect) {
-                visitedPaths.add(sanitizedTargetRoute);
-                await navigateTo(discoveredRedirect['toPath'], visitedPaths);
-                return;
-
-            }
-            // If route is found
-            if (discoveredRoute) {
-                history.pushState({}, '', sanitizedTargetRoute);
-                const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route function
-                if (typeof enterFunction !== 'function') {
-                    console.error(`The enterFunction value of this route MUST be a function.`); // Allows the error to be non blocking
-                    return;
-                }
-                await enterFunction(); // Call route function that corresponds to 'routeList' variable
-                activeRoute = discoveredRoute;
-                visitedPaths.clear();
-                return;
-            }
-            // If no route is found
-            if (routeNotFound['server'] === true) {
-                window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
-                return;
-            }
-            visitedPaths.add(sanitizedTargetRoute);
-            await navigateTo(routeNotFound['path'], visitedPaths);
-            return;
-        } catch (er) {
-            console.error(`TUI Router: Route Handling Error`);
-            console.error(er);
-            return;
-        }
     }
 
     //// UTILITY FUNCTIONS ////
