@@ -12,9 +12,11 @@ import {
     getRouterConfig,
     getRouteList,
     getRouteNotFound,
-    getRedirectList,
+    getRedirectList
+} from './lib/methods.js';
+import {
     navigateTo
-} from '/src/methods.js';
+} from './lib/navigate.js';
 
 function createRouter() {
     return {

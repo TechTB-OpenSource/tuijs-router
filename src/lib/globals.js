@@ -1,16 +1,19 @@
 import { tuiEvent } from 'tuijs-event';
 
 export const eventInstance = tuiEvent();
+
 /**
  * @type {RouterConfig}
  */
-export let routerConfig = {
+export const routerConfig = {
     routeList: [],
     routeNotFound: { server: false, path: '/404' },
     redirectList: []
 }
 
 /**
- * @type {Object}
+ * @type {ActiveRoute}
  */
-export let activeRoute = {};
+export const activeRoute = {
+    routes: {}
+}

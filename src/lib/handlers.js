@@ -1,3 +1,5 @@
+import { navigateTo } from "./navigate.js";
+
 export function handleClickEvent(event) {
     try {
         const anchor = event.target.closest('a'); // Find the closest <a> element
@@ -40,7 +42,7 @@ export function handleClickEvent(event) {
         }
         return;
     } catch (er) {
-        console.error(`TUI Router: Event Listener Error`);
+        console.error(`TUI Router Error: handlers > handleClickEvent`);
         console.error(er);
         return;
     }
@@ -63,7 +65,7 @@ export function handleNewTab(route) {
         }
         return;
     } catch (er) {
-        console.error(`TUI Router: New Tab Route Handling Error`);
+        console.error(`TUI Router Error: handlers > handleNewTab`);
         console.error(er);
         return;
     }
@@ -86,7 +88,7 @@ export function handleAnchorTag(href) {
         elmId.scrollIntoView({ behavior: 'smooth' });
         return;
     } catch (er) {
-        console.error(`TUI Router: Anchor Tag Handler Error`);
+        console.error(`TUI Router Error: handlers > handleAnchorTag`);
         console.error(er);
         return;
     }

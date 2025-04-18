@@ -54,3 +54,8 @@
  * @property {RouteNotFound} routeNotFound - Handler for unknown routes
  * @property {Redirect[]} redirectList - List of path redirects
  */
+
+/**
+ * @typedef {Object} ActiveRoute
+ * @property {object} route - An active route
+ */
