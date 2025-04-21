@@ -116,145 +116,162 @@ app.listen(3000);
 
 ## Below are all of the router methods.
 
-- startRouter
+### startRouter
 
 | Parameters |
 |------------|
 | None       |
+<br>
+<br>
 
-
-- stopRouter
+### stopRouter
 
 | Parameters |
 |------------|
 | None       |
+<br>
+<br>
 
-
-- setRouteList
+### setRouteList
 
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | newRouteList | Array    | An array of route Objects |
+<br>
+<br>
 
-
-- addRoute
-
-| Parameters   | Type     | Description               |
-|--------------|----------|---------------------------|
-| path         | string   | The route to be added     |
-
-
-- deleteRoute
+### addRoute
 
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
+<br>
+<br>
 
+### deleteRoute
 
-- replaceRoute
+| Parameters   | Type     | Description               |
+|--------------|----------|---------------------------|
+| path         | string   | The route to be added     |
+<br>
+<br>
+
+### replaceRoute
 
 | Parameters       | Type             | Description                                                              |
 |------------------|------------------|--------------------------------------------------------------------------|
 | path             | string           | The route to be added                                                    |
 | newEnterFunction | Function         | The function that executes when the route is triggered                   |
 | newExitFunction  | Function || null | The function that executes when the current route is navigated away from |
+<br>
+<br>
 
-
-- setServerRouteList
+### setServerRouteList
 
 | Parameters         | Type             | Description                                                        |
 |--------------------|------------------|--------------------------------------------------------------------|
 | newServerRouteList | Array            | List of server routes to be added to router instance configuration |
+<br>
+<br>
 
-
-- addServerRoute
-
-| Parameters   | Type     | Description               |
-|--------------|----------|---------------------------|
-| path         | string   | The route to be added     |
-
-
-- deleteServerRoute
+- ### addServerRoute
 
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
+<br>
+<br>
 
+- ### deleteServerRoute
 
-- replaceServerRoute
+| Parameters   | Type     | Description               |
+|--------------|----------|---------------------------|
+| path         | string   | The route to be added     |
+<br>
+<br>
+
+### replaceServerRoute
 
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
 | oldPath      | string   | The old route/path to be replaced         |
 | newPath      | string   | The new route/path to replace the old one |
+<br>
+<br>
 
-
-- setRouteNotFound
+### setRouteNotFound
 
 | Parameters   | Type     | Description                        |
 |--------------|----------|------------------------------------|
 | options      | Object   | The route not found object options |
+<br>
+<br>
 
-
-- setRedirectList
+### setRedirectList
 
 | Parameters   | Type     | Description                  |
 |--------------|----------|------------------------------|
 | redirectList | Array    | An array of redirect objects |
+<br>
+<br>
 
-
-- addRedirect
+### addRedirect
 
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
 | fromPath     | string   | The path that triggers the redirect       |
 | toPath       | string   | The new route/path to redirect to         |
+<br>
+<br>
 
-
-- deleteRedirect
+### deleteRedirect
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
 | fromPath     | string   | The redirect object to be deleted         |
+<br>
+<br>
 
-
-- getRouterConfig
-
-| Parameters |
-|------------|
-| None       |
-
-
-- getRouteList
+### getRouterConfig
 
 | Parameters |
 |------------|
 | None       |
+<br>
+<br>
 
-
-- getRouteNotFound
+### getRouteList
 
 | Parameters |
 |------------|
 | None       |
+<br>
+<br>
 
+### getRouteNotFound
 
-- getRedirectList
 | Parameters |
 |------------|
 | None       |
+<br>
+<br>
 
+### getRedirectList
+| Parameters |
+|------------|
+| None       |
+<br>
+<br>
 
-- navigateTo
+### navigateTo
 
 | Parameters   | Type     | Description                                                               |
 |--------------|----------|---------------------------------------------------------------------------|
 | targetRoute  | string   | The route/path to be navigated to                                         |
 | visitedPaths | Set      | A list of visited paths designed to prevent infinite route loops (20 Max) |
+<br>
+<br>
 
-
-- NavigateToAnchorTag
-    - Parameters
-        - anchor - string
+### NavigateToAnchorTag
 
 | Parameters   | Type     | Description                 |
 |--------------|----------|-----------------------------|
