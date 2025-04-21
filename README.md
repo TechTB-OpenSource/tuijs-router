@@ -4,7 +4,8 @@
 ***TUIJS-Router is built with modules. A bundler is recommended.***
 
 ***Last Updated 04/21/2025***
-
+<br>
+<br>
 
 ## Getting Started
 The TUIJS-Router is flexible and can handle all routes, or if desired, it can be easily configured to direct unknown routes or any specified routes to the server.
@@ -28,6 +29,8 @@ The TUIJS-Router is flexible and can handle all routes, or if desired, it can be
         - "toPath" - string - Defines the pathe to be redirected to.
 
 4. Start the router instance. This initiates the router eventListeners and the first route.
+<br>
+<br>
 
 ### Client example using standard JavaScript.
 ```js
@@ -98,6 +101,8 @@ app.get('*', (req, res, next) => {
 
 app.listen(3000);
 ```
+<br>
+<br>
 
 ## Notes:
 - Link click handling.
@@ -112,7 +117,8 @@ app.listen(3000);
         - 'mailto:'
     - If the link prefix is '#' client-side, the 'NavigateToAnchorTag' method is used to scroll to the element location.
     - If the link target is set to '_blank', client side routing will be skipped.
-            
+<br>
+<br>        
 
 ## Below are all of the router methods.
 
