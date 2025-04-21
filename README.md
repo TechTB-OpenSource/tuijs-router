@@ -137,66 +137,125 @@ app.listen(3000);
 | newRouteList | Array    | An array of route Objects |
 
 
-
-
 - addRoute
-    - Parameters
-        - path - string
+
+| Parameters   | Type     | Description               |
+|--------------|----------|---------------------------|
+| path         | string   | The route to be added     |
+
+
 - deleteRoute
-    - Parameters
-        - path - string
+
+| Parameters   | Type     | Description               |
+|--------------|----------|---------------------------|
+| path         | string   | The route to be added     |
+
+
 - replaceRoute
-    - Parameters
-        - path - string
-        - newEnterFunction - Function
-        - newExitFunction - Function or null
+
+| Parameters       | Type             | Description                                                              |
+|------------------|------------------|--------------------------------------------------------------------------|
+| path             | string           | The route to be added                                                    |
+| newEnterFunction | Function         | The function that executes when the route is triggered                   |
+| newExitFunction  | Function || null | The function that executes when the current route is navigated away from |
+
 
 - setServerRouteList
-    - Parameters
-        - newServerRouteList - Array
+
+| Parameters         | Type             | Description                                                        |
+|--------------------|------------------|--------------------------------------------------------------------|
+| newServerRouteList | Array            | List of server routes to be added to router instance configuration |
+
+
 - addServerRoute
-    - Parameters
-        - path - string
+
+| Parameters   | Type     | Description               |
+|--------------|----------|---------------------------|
+| path         | string   | The route to be added     |
+
+
 - deleteServerRoute
-    - Parameters
-        - path - string
+
+| Parameters   | Type     | Description               |
+|--------------|----------|---------------------------|
+| path         | string   | The route to be added     |
+
+
 - replaceServerRoute
-    - Parameters
-        - oldPath - string
-        - newPath - string
+
+| Parameters   | Type     | Description                               |
+|--------------|----------|-------------------------------------------|
+| oldPath      | string   | The old route/path to be replaced         |
+| newPath      | string   | The new route/path to replace the old one |
+
 
 - setRouteNotFound
-    - Parameters
-        - options - Object
+
+| Parameters   | Type     | Description                        |
+|--------------|----------|------------------------------------|
+| options      | Object   | The route not found object options |
+
 
 - setRedirectList
-    - Parameters
-        - redirectList - Array
+
+| Parameters   | Type     | Description                  |
+|--------------|----------|------------------------------|
+| redirectList | Array    | An array of redirect objects |
+
+
 - addRedirect
-    - Parameters
-        - fromPath - string
-        - toPath - string
+
+| Parameters   | Type     | Description                               |
+|--------------|----------|-------------------------------------------|
+| fromPath     | string   | The path that triggers the redirect       |
+| toPath       | string   | The new route/path to redirect to         |
+
+
 - deleteRedirect
-    - Parameters
-        - fromPath - string
+| Parameters   | Type     | Description                               |
+|--------------|----------|-------------------------------------------|
+| fromPath     | string   | The redirect object to be deleted         |
+
 
 - getRouterConfig
-    - Parameters
-        - None
+
+| Parameters |
+|------------|
+| None       |
+
+
 - getRouteList
-    - Parameters
-        - None
+
+| Parameters |
+|------------|
+| None       |
+
+
 - getRouteNotFound
-    - Parameters
-        - None
+
+| Parameters |
+|------------|
+| None       |
+
+
 - getRedirectList
-    - Parameters
-        - None
+| Parameters |
+|------------|
+| None       |
+
 
 - navigateTo
-    - Parameters
-        - targetRoute - string
-        - visitedPaths - Set
+
+| Parameters   | Type     | Description                                                               |
+|--------------|----------|---------------------------------------------------------------------------|
+| targetRoute  | string   | The route/path to be navigated to                                         |
+| visitedPaths | Set      | A list of visited paths designed to prevent infinite route loops (20 Max) |
+
+
 - NavigateToAnchorTag
     - Parameters
         - anchor - string
+
+| Parameters   | Type     | Description                 |
+|--------------|----------|-----------------------------|
+| anchor       | string   | The hash to be navigated to |
