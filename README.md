@@ -117,18 +117,21 @@ app.listen(3000);
 ## Below are all of the router methods.
 
 - startRouter
+
 | Parameters |
 |------------|
 | None       |
 
 
 - stopRouter
+
 | Parameters |
 |------------|
 | None       |
 
 
 - setRouteList
+
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | newRouteList | Array    | An array of route Objects |
