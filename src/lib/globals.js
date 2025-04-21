@@ -7,7 +7,8 @@ export const eventInstance = tuiEvent();
  */
 export const routerConfig = {
     routeList: [],
-    routeNotFound: { server: false, path: '/404' },
+    serverRouteList: [],
+    routeNotFound: { server: true, path: '/404' },
     redirectList: []
 }
 

@@ -184,6 +184,99 @@ export function setRouteNotFound(options) {
 }
 
 /**
+ * Sets the routeListServer array in the routerConfig Object
+ * @param {ServerRouteList} newServerRouteList - An Array containing route Objects
+ * @returns {boolean} Returns true on success and false on error.
+ */
+export function setServerRouteList(newServerRouteList) {
+    try {
+        if (!checkIsArray(newServerRouteList)) {
+            throw new Error(`The 'newServerRouteList' must be an array.`);
+        }
+        for (let i = 0; i < newServerRouteList.length; i++) {
+            if (typeof newServerRouteList[i] !== 'string') {
+                throw new Error(`The route path at index ${i} must be a string.`);
+            }
+        }
+        routerConfig['serverRouteList'] = newServerRouteList;
+        return true;
+    } catch (er) {
+        console.error(`TUI Router Error: methods > setServerRouteList`);
+        console.error(er);
+        return false;
+    }
+}
+
+/**
+ * Creates a route Object within the serverRouteList Array
+ * @param {string} path - The path of the new route
+ * @returns {boolean} Returns true on success and false on error.
+ */
+export function addServerRoute(path) {
+    try {
+        if (typeof path !== 'string') {
+            throw new Error(`Route 'path' must be a string`);
+        }
+        routerConfig['serverRouteList'].push(path);
+        return true;
+    } catch (er) {
+        console.error(`TUI Router Error: methods > addServerRoute`);
+        console.error(er);
+        return false;
+    }
+}
+
+/**
+ * Deletes all matching route Objects within the serverRouteList Array based on input.
+ * @param {string} path - The path of the route to be deleted.
+ * @returns {boolean} Returns true on success and false on error.
+ */
+export function deleteServerRoute(path) {
+    try {
+        if (typeof path !== 'string') {
+            throw new Error(`Route 'path' must be a string`);
+        }
+        for (let i = routerConfig['serverRouteList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
+            if (routerConfig['serverRouteList'][i] === path) {
+                routerConfig['serverRouteList'].splice(i, 1);
+            }
+        }
+        return true;
+    } catch (er) {
+        console.error(`TUI Router Error: methods > deleteServerRoute`);
+        console.error(er);
+        return false;
+    }
+}
+
+/**
+ * Replaces and existing route Object within the serverRouteList Array
+ * @param {string} oldPath - The path of the old route to be replaced
+ * @param {string} newPath - The path of the new route
+ * @returns {boolean} Returns true on success and false on error.
+ */
+export function replaceServerRoute(oldPath, newPath) {
+    try {
+        if (typeof oldPath !== 'string') {
+            throw new Error(`Route 'oldPath' must be a string`);
+        }
+        if (typeof newPath !== 'string') {
+            throw new Error(`Route 'newPath' must be a string`);
+        }
+        for (let i = routerConfig['serverRouteList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
+            if (routerConfig['serverRouteList'][i] === oldPath) {
+                routerConfig['serverRouteList'][i] = newPath;
+            }
+        }
+        return true;
+    } catch (er) {
+        console.error(`TUI Router Error: methods > replaceServerRoute`);
+        console.error(er);
+        return false;
+    }
+}
+
+/**
  * Sets the redirectList Array in the routerConfig Object
  * @param {RedirectList} redirectList - An Array containing redirectList Objects
  * @returns {boolean} Returns true on success and false on error.

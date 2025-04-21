@@ -39,6 +39,11 @@
  */
 
 /**
+ * @typedef {Array} ServerRouteList
+ * @property {string} - A route/path which will always be directed to the server.
+ */
+
+/**
  * @typedef {Object} Redirect
  * @property {string} fromPath - The route being hit that will trigger a redirect.
  * @property {string} toPath - The target path of the redirect once triggered.
@@ -50,9 +55,10 @@
 
 /**
  * @typedef {Object} RouterConfig
- * @property {Route[]} routeList - List of route definitions
+ * @property {RouteList} routeList - List of route definitions
+ * @property {ServerRouteList} serverRouteList - List of path redirects
  * @property {RouteNotFound} routeNotFound - Handler for unknown routes
- * @property {Redirect[]} redirectList - List of path redirects
+ * @property {RedirectList} redirectList - List of path redirects
  */
 
 /**

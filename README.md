@@ -7,7 +7,8 @@
 
 
 ## Getting Started
-1. Ensure you server has a typical SPA setup. All routes should serve to 'index.html' (You may need to setup a 404 server side route if server side page-not-found handling is desired).
+TUIJS-Router is flexible. It can handle all routes, or if desired, it can be easily configured to direct routes unknown by the 
+1. The easiest way to get started is to configure you server to send all routes to index.html. If a true 404 is desired, you can configure the 
 2. On the client side app import the 'createRouter' function from 'tuijs-router', then create a new instance.
 
 ```js
@@ -40,6 +41,9 @@ routerInstance.setRouteList([
     { path: '/services/page1', enterFunction: renderPageTerms },
     { path: '/services/page2', enterFunction: renderPageTerms }
 ]);
+routerInstance.setServerRouteList([
+    '/api/server-route-1'
+]);
 routerInstance.setRouteNotFound({
     server: true,
     path: '/404.html'
@@ -62,7 +66,22 @@ routerInstance.setRedirectList([
 routerInstance.startRouter();
 ```
 
-## Below are all of the functions that can be used to manipulate the router.
+Notes:
+- Link click handling.
+    - If the link starts with one of the following prefix's, client side routing will be skipped.
+        - 'http://'
+        - 'https://'
+        - 'ftp://'
+        - 'file://'
+        - 'ws://'
+        - 'wss://'
+        - 'tel:'
+        - 'mailto:'
+    - If the link prefix is '#' client-side, the 'NavigateToAnchorTag' method is used to scroll to the element location.
+    - If the link target is set to '_blank', client side routing will be skipped.
+            
+
+## Below are all of the router methods.
 
 - startRouter - No parameters
 - stopRouter - No parameters

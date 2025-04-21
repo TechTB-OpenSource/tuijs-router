@@ -5,6 +5,10 @@ import {
     addRoute,
     deleteRoute,
     replaceRoute,
+    setServerRouteList,
+    addServerRoute,
+    deleteServerRoute,
+    replaceServerRoute,
     setRouteNotFound,
     setRedirectList,
     addRedirect,
@@ -15,7 +19,8 @@ import {
     getRedirectList
 } from './lib/methods.js';
 import {
-    navigateTo
+    navigateTo,
+    NavigateToAnchorTag
 } from './lib/navigate.js';
 
 function createRouter() {
@@ -26,6 +31,10 @@ function createRouter() {
         addRoute,
         deleteRoute,
         replaceRoute,
+        setServerRouteList,
+        addServerRoute,
+        deleteServerRoute,
+        replaceServerRoute,
         setRouteNotFound,
         setRedirectList,
         addRedirect,
@@ -34,7 +43,8 @@ function createRouter() {
         getRouteList,
         getRouteNotFound,
         getRedirectList,
-        navigateTo
+        navigateTo,
+        NavigateToAnchorTag
     }
 }
 

@@ -11,6 +11,7 @@ import { findRoute, sanitizePath } from './utils.js';
 export async function navigateTo(targetRoute, visitedPaths = new Set()) {
     try {
         const exitFunction = activeRoute.route?.exitFunction ?? null;
+        const serverRouteList = routerConfig['serverRouteList'];
         const routeNotFound = routerConfig['routeNotFound'];
         const redirectList = routerConfig['redirectList'];
         // If targetRoute is null 
@@ -39,6 +40,11 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
                 return;
             }
             await exitFunction();
+        }
+
+        if (serverRouteList.includes(sanitizedTargetRoute)) {
+            window.location.href = sanitizedTargetRoute; // Send request to server if route isn found and serverRouteList 
+            return;
         }
 
         const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
