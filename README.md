@@ -122,14 +122,12 @@ app.listen(3000);
 |------------|
 | None       |
 <br>
-<br>
 
 ### stopRouter
 
 | Parameters |
 |------------|
 | None       |
-<br>
 <br>
 
 ### setRouteList
@@ -138,7 +136,6 @@ app.listen(3000);
 |--------------|----------|---------------------------|
 | newRouteList | Array    | An array of route Objects |
 <br>
-<br>
 
 ### addRoute
 
@@ -146,14 +143,12 @@ app.listen(3000);
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
 <br>
-<br>
 
 ### deleteRoute
 
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
-<br>
 <br>
 
 ### replaceRoute
@@ -164,14 +159,12 @@ app.listen(3000);
 | newEnterFunction | Function         | The function that executes when the route is triggered                   |
 | newExitFunction  | Function || null | The function that executes when the current route is navigated away from |
 <br>
-<br>
 
 ### setServerRouteList
 
 | Parameters         | Type             | Description                                                        |
 |--------------------|------------------|--------------------------------------------------------------------|
 | newServerRouteList | Array            | List of server routes to be added to router instance configuration |
-<br>
 <br>
 
 - ### addServerRoute
@@ -180,14 +173,12 @@ app.listen(3000);
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
 <br>
-<br>
 
 - ### deleteServerRoute
 
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
-<br>
 <br>
 
 ### replaceServerRoute
@@ -197,7 +188,6 @@ app.listen(3000);
 | oldPath      | string   | The old route/path to be replaced         |
 | newPath      | string   | The new route/path to replace the old one |
 <br>
-<br>
 
 ### setRouteNotFound
 
@@ -205,14 +195,12 @@ app.listen(3000);
 |--------------|----------|------------------------------------|
 | options      | Object   | The route not found object options |
 <br>
-<br>
 
 ### setRedirectList
 
 | Parameters   | Type     | Description                  |
 |--------------|----------|------------------------------|
 | redirectList | Array    | An array of redirect objects |
-<br>
 <br>
 
 ### addRedirect
@@ -222,13 +210,11 @@ app.listen(3000);
 | fromPath     | string   | The path that triggers the redirect       |
 | toPath       | string   | The new route/path to redirect to         |
 <br>
-<br>
 
 ### deleteRedirect
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
 | fromPath     | string   | The redirect object to be deleted         |
-<br>
 <br>
 
 ### getRouterConfig
@@ -237,14 +223,12 @@ app.listen(3000);
 |------------|
 | None       |
 <br>
-<br>
 
 ### getRouteList
 
 | Parameters |
 |------------|
 | None       |
-<br>
 <br>
 
 ### getRouteNotFound
@@ -253,13 +237,11 @@ app.listen(3000);
 |------------|
 | None       |
 <br>
-<br>
 
 ### getRedirectList
 | Parameters |
 |------------|
 | None       |
-<br>
 <br>
 
 ### navigateTo
@@ -268,7 +250,6 @@ app.listen(3000);
 |--------------|----------|---------------------------------------------------------------------------|
 | targetRoute  | string   | The route/path to be navigated to                                         |
 | visitedPaths | Set      | A list of visited paths designed to prevent infinite route loops (20 Max) |
-<br>
 <br>
 
 ### NavigateToAnchorTag
