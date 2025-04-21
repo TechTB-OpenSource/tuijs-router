@@ -50,7 +50,7 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
 
         const findRouteResults = findRoute(sanitizedTargetRoute)
         if (findRouteResults) {
-            const { discoveredRoute, params } = findRouteResults;
+            const { discoveredRoute, params, anchor } = findRouteResults;
             history.pushState({}, '', sanitizedTargetRoute);
             const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route export function
             if (typeof enterFunction !== 'function') {
@@ -60,6 +60,9 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
             await enterFunction(params); // Call route export function that corresponds to 'routeList' variable
             activeRoute['route'] = discoveredRoute;
             visitedPaths.clear();
+            if (anchor) {
+                NavigateToAnchorTag(anchor);
+            }
             return;
         }
         // If no route is found
@@ -72,6 +75,29 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
         return;
     } catch (er) {
         console.error(`TUI Router Error: methods > navigateTo`);
+        console.error(er);
+        return;
+    }
+}
+
+/**
+ * Handles anchor tag routes
+ * Scrolls to element into view smoothly
+ * @param {string} href - URL 
+ * @returns {void}
+ * @throws {Error} - If an error occurs.
+ */
+export function NavigateToAnchorTag(anchor) {
+    try {
+        let elmId = document.getElementById(anchor.slice(1));
+        if (!elmId) {
+            console.warn(`Anchor element not found for: ${anchor}`);
+            return;
+        }
+        elmId.scrollIntoView({ behavior: 'smooth' });
+        return;
+    } catch (er) {
+        console.error(`TUI Router Error: handlers > handleAnchorTag`);
         console.error(er);
         return;
     }

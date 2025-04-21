@@ -6,9 +6,9 @@ export function findRoute(sanitizedTargetRoute) {
         for (let i = 0; i < routeList.length; i++) {
             const testRouteObject = routeList[i];
             const testRoutePath = routeList[i]['path'];
-            const { matches, params } = matchRoute(testRoutePath, sanitizedTargetRoute);
+            const { matches, params, anchor } = matchRoute(testRoutePath, sanitizedTargetRoute);
             if (matches) {
-                return { discoveredRoute: testRouteObject, params };
+                return { discoveredRoute: testRouteObject, params, anchor };
             }
         }
         return null;
@@ -24,6 +24,7 @@ export function matchRoute(testRoutePath, sanitizedTargetRoute) {
         const urlParams = {};
         const urlObj = new URL(sanitizedTargetRoute, window.location.origin);
         const queryParams = Object.fromEntries(urlObj.searchParams.entries());
+        const hash = urlObj.hash
         const testRouteParts = testRoutePath.split('/');
         const targetRouteParts = urlObj.pathname.split('/');
         // Check if the path part counts are different. If so, then the routes don't match.
@@ -49,7 +50,7 @@ export function matchRoute(testRoutePath, sanitizedTargetRoute) {
 
         // If the test route passes all tests, true is returned.
         const params = { ...urlParams, ...queryParams };
-        return { matches: true, params };
+        return { matches: true, params, anchor: hash || null };
     } catch (er) {
         console.error(`TUI Router Error: utils > matchRoute`);
         console.error(er);

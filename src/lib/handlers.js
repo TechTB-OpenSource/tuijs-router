@@ -1,4 +1,4 @@
-import { navigateTo } from "./navigate.js";
+import { navigateTo, NavigateToAnchorTag } from "./navigate.js";
 
 export function handleClickEvent(event) {
     try {
@@ -23,10 +23,10 @@ export function handleClickEvent(event) {
                 return;
             }
 
-            // If the URL begins with '#', ignore routing and call handleAnchorTag to scroll to link location on page
+            // If the URL begins with '#', ignore routing and call NavigateToAnchorTag to scroll to link location on page
             if (href.startsWith('#')) {
                 event.preventDefault();
-                handleAnchorTag(href);
+                NavigateToAnchorTag(href);
                 return;
             }
 
@@ -66,29 +66,6 @@ export function handleNewTab(route) {
         return;
     } catch (er) {
         console.error(`TUI Router Error: handlers > handleNewTab`);
-        console.error(er);
-        return;
-    }
-}
-
-/**
- * Handles anchor tag routes
- * Scrolls to element into view smoothly
- * @param {string} href - URL 
- * @returns {void}
- * @throws {Error} - If an error occurs.
- */
-export function handleAnchorTag(href) {
-    try {
-        let elmId = document.getElementById(href.slice(1));
-        if (!elmId) {
-            console.warn(`Anchor element not found for href: ${href}`);
-            return;
-        }
-        elmId.scrollIntoView({ behavior: 'smooth' });
-        return;
-    } catch (er) {
-        console.error(`TUI Router Error: handlers > handleAnchorTag`);
         console.error(er);
         return;
     }
