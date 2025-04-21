@@ -34,8 +34,8 @@ The TUIJS-Router is flexible and can handle all routes, or if desired, it can be
 
 ### Client example using standard JavaScript.
 ```js
-import { createRouter } from 'tuijs-router';
-const routerInstance = createRouter();
+import { tuiRouter } from 'tuijs-router';
+const routerInstance = tuiRouter();
 
 routerInstance.setRouteList([
     { path: '/', enterFunction: renderPageHome, exitFunction: leaverPageHome },
