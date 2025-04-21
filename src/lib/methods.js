@@ -10,8 +10,8 @@ import { navigateTo } from "./navigate.js";
 export function startRouter() {
     try {
         eventInstance.addTrackedEvent(document, 'click', handleClickEvent); // Click Events
-        eventInstance.addTrackedEvent(window, 'popstate', function () { navigateTo(location.pathname) }); // Navigation Events
-        navigateTo(null); // Initial route
+        eventInstance.addTrackedEvent(window, 'popstate', function () { navigateTo(location.pathname + location.search + location.hash) }); // Navigation Events
+        navigateTo(location.pathname + location.search + location.hash); // Initial route
         return true;
     } catch (er) {
         console.error(`TUI Router Error: methods > startRouter`);

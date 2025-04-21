@@ -14,9 +14,6 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
         const routeNotFound = routerConfig['routeNotFound'];
         const redirectList = routerConfig['redirectList'];
         // If targetRoute is null 
-        if (targetRoute === null) {
-            targetRoute = window.location.pathname;
-        }
         const sanitizedTargetRoute = sanitizePath(targetRoute);
         if (visitedPaths.size > 20) {
             console.error(`Maximum (20) redirects exceeded.`);
