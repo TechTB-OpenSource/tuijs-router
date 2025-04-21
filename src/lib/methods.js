@@ -54,10 +54,10 @@ export function setRouteList(newRouteList) {
                 throw new Error(`The route path at index ${i}  must be a string.`);
             }
             if (typeof newRouteList[i]['enterFunction'] !== 'function') {
-                throw new Error(`The route enterFunction at index ${i} must be a export function.`);
+                throw new Error(`The route enterFunction at index ${i} must be a function.`);
             }
             if (typeof newRouteList[i]['exitFunction'] !== 'function' && exitFunction !== null && exitFunction !== undefined) {
-                throw new Error(`The route exitFunction at index ${i} must be a export function or null.`);
+                throw new Error(`The route exitFunction at index ${i} must be a function or null.`);
             }
         }
         routerConfig['routeList'] = newRouteList;
@@ -72,20 +72,20 @@ export function setRouteList(newRouteList) {
 /**
  * Creates a route Object within the routeList Array
  * @param {string} path - The path of the new route
- * @param {export function} enterFunction - The export function that will be executed when the route is navigated to.
- * @param {export function} exitFunction - An option export function that will be executed when the route is navigated away from.
+ * @param {function} enterFunction - The function that will be executed when the route is navigated to.
+ * @param {function} exitFunction - An option function that will be executed when the route is navigated away from.
  * @returns {boolean} Returns true on success and false on error.
  */
 export function addRoute(path, enterFunction, exitFunction = null) {
     try {
         if (typeof path !== 'string') {
-            throw new Error(`Route 'path' must be a string`);
+            throw new Error(`Route 'path' must be a string.`);
         }
         if (typeof enterFunction !== 'function') {
-            throw new Error(`Route 'enterFunction' must be a export function`);
+            throw new Error(`Route 'enterFunction' must be a function.`);
         }
         if (typeof exitFunction !== 'function' && exitFunction !== null) {
-            throw new Error(`Route 'exitFunction' must be a export function`);
+            throw new Error(`Route 'exitFunction' must be a function.`);
         }
         routerConfig['routeList'].push({
             path: path,
@@ -108,7 +108,7 @@ export function addRoute(path, enterFunction, exitFunction = null) {
 export function deleteRoute(path) {
     try {
         if (typeof path !== 'string') {
-            throw new Error(`Route 'path' must be a string`);
+            throw new Error(`Route 'path' must be a string.`);
         }
         for (let i = routerConfig['routeList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
             if (routerConfig['routeList'][i]['path'] === path) {
@@ -124,22 +124,22 @@ export function deleteRoute(path) {
 }
 
 /**
- * Replaces and existing route Object within the routeList Array
- * @param {string} path - The path of the route to be replaced
- * @param {export function} newEnterFunction - The export function that will be executed when the route is navigated to.
- * @param {export function} newExitFunction - An option export function that will be executed when the route is navigated away from.
+ * Replaces and existing route Object within the routeList Array with a new set of enter and exit Functions.
+ * @param {string} path - The path of the route that will have its Functions replaced.
+ * @param {function} newEnterFunction - The new Function that will be executed when the route is navigated to.
+ * @param {function} newExitFunction - A new optional exit Function that will be executed when the route is navigated away from.
  * @returns {boolean} Returns true on success and false on error.
  */
 export function replaceRoute(path, newEnterFunction, newExitFunction = null) {
     try {
         if (typeof path !== 'string') {
-            throw new Error(`Route 'path' must be a string`);
+            throw new Error(`Route 'path' must be a string.`);
         }
         if (typeof newEnterFunction !== 'function') {
-            throw new Error(`Route 'newEnterFunction' must be a export function`);
+            throw new Error(`Route 'newEnterFunction' must be a function.`);
         }
         if (typeof newExitFunction !== 'function' && newExitFunction !== null) {
-            throw new Error(`Route 'newExitFunction' must be a export function`);
+            throw new Error(`Route 'newExitFunction' must be a function.`);
         }
         const index = routerConfig.routeList.findIndex(route => route['path'] === path);
         if (index === -1) {
@@ -149,35 +149,6 @@ export function replaceRoute(path, newEnterFunction, newExitFunction = null) {
         return true;
     } catch (er) {
         console.error(`TUI Router Error: methods > replaceRoute`);
-        console.error(er);
-        return false;
-    }
-}
-
-/**
- * Sets the routeNotFound Object in the routerConfig Object
- * @param {RouteNotFound} options - An Object containing routeNotFound options
- * @returns {boolean} Returns true on success and false on error.
- */
-export function setRouteNotFound(options) {
-    try {
-        if (!checkIsObject(options)) {
-            throw new Error('Input must be an object.');
-        }
-        const { server, path, ...rest } = options;
-        if (Object.keys(rest).length > 0) {
-            throw new Error(`Unexpected properties provided: ${Object.keys(rest).join(', ')}`);
-        }
-        if (typeof server !== 'boolean') {
-            throw new Error(`Provided value for 'server' must be a boolean.`);
-        }
-        if (typeof path !== 'string') {
-            throw new Error(`Provided value for 'path' must be a string.`);
-        }
-        routerConfig['routeNotFound'] = { server, path };
-        return true;
-    } catch (er) {
-        console.error(`TUI Router Error: methods > setRouteNotFound`);
         console.error(er);
         return false;
     }
@@ -271,6 +242,35 @@ export function replaceServerRoute(oldPath, newPath) {
         return true;
     } catch (er) {
         console.error(`TUI Router Error: methods > replaceServerRoute`);
+        console.error(er);
+        return false;
+    }
+}
+
+/**
+ * Sets the routeNotFound Object in the routerConfig Object
+ * @param {RouteNotFound} options - An Object containing routeNotFound options
+ * @returns {boolean} Returns true on success and false on error.
+ */
+export function setRouteNotFound(options) {
+    try {
+        if (!checkIsObject(options)) {
+            throw new Error('Input must be an object.');
+        }
+        const { server, path, ...rest } = options;
+        if (Object.keys(rest).length > 0) {
+            throw new Error(`Unexpected properties provided: ${Object.keys(rest).join(', ')}`);
+        }
+        if (typeof server !== 'boolean') {
+            throw new Error(`Provided value for 'server' must be a boolean.`);
+        }
+        if (typeof path !== 'string') {
+            throw new Error(`Provided value for 'path' must be a string.`);
+        }
+        routerConfig['routeNotFound'] = { server, path };
+        return true;
+    } catch (er) {
+        console.error(`TUI Router Error: methods > setRouteNotFound`);
         console.error(er);
         return false;
     }

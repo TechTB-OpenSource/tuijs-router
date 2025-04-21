@@ -89,7 +89,7 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
 /**
  * Handles anchor tag routes
  * Scrolls to element into view smoothly
- * @param {string} href - URL 
+ * @param {string} anchor - URL 
  * @returns {void}
  * @throws {Error} - If an error occurs.
  */
