@@ -50,7 +50,7 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
 
         const findRouteResults = findRoute(sanitizedTargetRoute)
         if (findRouteResults) {
-            const { discoveredRoute, params, anchor } = findRouteResults;
+            const { discoveredRoute, params } = findRouteResults;
             history.pushState({}, '', sanitizedTargetRoute);
             const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route export function
             if (typeof enterFunction !== 'function') {
@@ -60,8 +60,8 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
             await enterFunction(params); // Call route export function that corresponds to 'routeList' variable
             activeRoute['route'] = discoveredRoute;
             visitedPaths.clear();
-            if (anchor) {
-                NavigateToAnchorTag(anchor);
+            if (params['anchor']) {
+                NavigateToAnchorTag(params['anchor']);
             }
             return;
         }
