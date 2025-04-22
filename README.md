@@ -105,6 +105,7 @@ app.listen(3000);
 <br>
 
 ## Notes:
+- ***IT IS NOT RECOMMENDED TO USE DYNAMIC ROUTES AT THE ROOT. THIS CAN BREAK ROUTING, CREATE ROUTING LOOPS, OR CAUSE SEO ISSUES.***
 - Link click handling.
     - If the link starts with one of the following prefix's, client side routing will be skipped.
         - 'http://'

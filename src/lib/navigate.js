@@ -42,11 +42,20 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
             await exitFunction();
         }
 
+        // If route not found path is explicitly called and the server boolean is true.
+        // This prevents the dev from needing to add the route not found path to the server route list explicitly.
+        if (sanitizedTargetRoute === routeNotFound['path'] && routeNotFound['server'] === true) {
+            window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
+            return;
+        }
+
+        // If a route on the server route list is explicitly called.
         if (serverRouteList.includes(sanitizedTargetRoute)) {
             window.location.href = sanitizedTargetRoute; // Send request to server if route isn found and serverRouteList 
             return;
         }
 
+        // If a matching redirect is discovered in a matching redirect list.
         const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
         if (discoveredRedirect) {
             visitedPaths.add(sanitizedTargetRoute);
