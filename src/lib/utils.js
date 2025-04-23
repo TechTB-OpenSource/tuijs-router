@@ -1,5 +1,11 @@
 import { routerConfig } from "./globals.js";
 
+/**
+ * Attempts to find a sanitized target route within the router configuration object.
+ * @param {string} sanitizedTargetRoute - The sanitized path to test against.
+ * @returns {{ discoveredRoute: Object, params: Object } | null} 
+ * An object containing the matched route (`discoveredRoute`) and extracted parameters (`params`) if a match is found; otherwise, `null`.
+ */
 export function findRoute(sanitizedTargetRoute) {
     try {
         const routeList = routerConfig['routeList'];
@@ -19,6 +25,13 @@ export function findRoute(sanitizedTargetRoute) {
     }
 }
 
+/**
+ * Attempts to match a test route pattern (e.g., "/user/:id") against a target route (e.g., "/user/123").
+ * Extracts path parameters, query parameters, and hash if matched.
+ * @param {string} testRoutePath - The route pattern to match, potentially with dynamic segments (e.g., "/user/:id").
+ * @param {string} sanitizedTargetRoute - The actual path to test against, already sanitized.
+ * @returns {{ matches: boolean, params?: Object }} An object with a `matches` boolean and, if matched, a `params` object containing path, query, and hash parameters.
+ */
 export function matchRoute(testRoutePath, sanitizedTargetRoute) {
     try {
         const urlParams = {};
@@ -61,8 +74,7 @@ export function matchRoute(testRoutePath, sanitizedTargetRoute) {
 /**
  * Removes trailing forward slashes from all paths except for the root path.
  * @param {string} path - Path 
- * @returns {string} - Returns path with trailing forward slashes removed.
- * @throws {Error} - If an error occurs.
+ * @returns {string} - The sanitized path without trailing slashes, unless it's the root path.
  */
 export function sanitizePath(path) {
     try {

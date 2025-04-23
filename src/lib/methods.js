@@ -359,6 +359,7 @@ export function deleteRedirect(fromPath) {
 export function getRouterConfig() {
     return routerConfig;
 }
+
 /**
  * Returns the RouteList array.
  * @returns {RouteList}
@@ -366,6 +367,7 @@ export function getRouterConfig() {
 export function getRouteList() {
     return routerConfig['routeList'];
 }
+
 /**
  * Returns the RouteNotFound Object.
  * @returns {RouteNotFound}
@@ -373,6 +375,7 @@ export function getRouteList() {
 export function getRouteNotFound() {
     return routerConfig['routeNotFound'];
 }
+
 /**
  * Returns the RedirectList Object.
  * @returns {RedirectList}

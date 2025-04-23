@@ -6,7 +6,6 @@ import { findRoute, sanitizePath } from './utils.js';
  * @param {string} targetRoute - The route to navigate to.
  * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
  * @returns {void}
- * @throws {Error} - If an error occurs during navigation.
  */
 export async function navigateTo(targetRoute, visitedPaths = new Set()) {
     try {
@@ -76,7 +75,7 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
             activeRoute['route'] = discoveredRoute;
             visitedPaths.clear();
             if (params['anchor']) {
-                NavigateToAnchorTag(params['anchor']);
+                navigateToAnchorTag(params['anchor']);
             }
             return;
         }
@@ -96,13 +95,35 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
 }
 
 /**
+* Allows the client side router to open a page in a new tab
+* @param {string} route - Path to the route
+* @returns  {void}
+* @throws {Error} - If an error occurs.
+*/
+export function navigateToNewTab(route) {
+    try {
+        const newTab = window.open('', '_blank');
+        const newUrl = `${window.location.origin}${route}`;
+        if (newTab) {
+            newTab.location.href = newUrl;
+        } else {
+            throw new Error('Pop-up blocked or new tab could not be opened.');
+        }
+        return;
+    } catch (er) {
+        console.error(`TUI Router Error: handlers > navigateToNewTab`);
+        console.error(er);
+        return;
+    }
+}
+
+/**
  * Handles anchor tag routes
  * Scrolls to element into view smoothly
  * @param {string} anchor - URL 
  * @returns {void}
- * @throws {Error} - If an error occurs.
  */
-export function NavigateToAnchorTag(anchor) {
+export function navigateToAnchorTag(anchor) {
     try {
         let elmId = document.getElementById(anchor.slice(1));
         if (!elmId) {

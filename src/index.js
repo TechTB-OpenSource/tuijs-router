@@ -20,7 +20,8 @@ import {
 } from './lib/methods.js';
 import {
     navigateTo,
-    NavigateToAnchorTag
+    navigateToNewTab,
+    navigateToAnchorTag
 } from './lib/navigate.js';
 
 function createRouter() {
@@ -44,7 +45,8 @@ function createRouter() {
         getRouteNotFound,
         getRedirectList,
         navigateTo,
-        NavigateToAnchorTag
+        navigateToNewTab,
+        navigateToAnchorTag
     }
 }
 
