@@ -29,8 +29,6 @@ export function findServerRoute(sanitizedTargetRoute) {
     try {
         const serverRouteList = routerConfig['serverRouteList'];
         for (let i = 0; i < serverRouteList.length; i++) {
-            console.log(serverRouteList[i])
-            console.log(sanitizedTargetRoute)
             const { matches, params } = matchRoute(serverRouteList[i], sanitizedTargetRoute);
             if (matches) {
                 return { discoveredRoute: serverRouteList[i], params };
