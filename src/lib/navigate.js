@@ -1,5 +1,5 @@
 import { routerConfig, activeRoute } from './globals.js';
-import { findRoute, sanitizePath } from './utils.js';
+import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
 
 /**
  * Handles the routing logic. This is the core of the router.
@@ -10,7 +10,6 @@ import { findRoute, sanitizePath } from './utils.js';
 export async function navigateTo(targetRoute, visitedPaths = new Set()) {
     try {
         const exitFunction = activeRoute.route?.exitFunction ?? null;
-        const serverRouteList = routerConfig['serverRouteList'];
         const routeNotFound = routerConfig['routeNotFound'];
         const redirectList = routerConfig['redirectList'];
         // If targetRoute is null 
@@ -49,7 +48,8 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
         }
 
         // If a route on the server route list is explicitly called.
-        if (serverRouteList.includes(sanitizedTargetRoute)) {
+        const findServerRouteResults = findServerRoute(sanitizedTargetRoute)
+        if (findServerRouteResults) {
             window.location.href = sanitizedTargetRoute; // Send request to server if route isn found and serverRouteList 
             return;
         }
@@ -62,9 +62,9 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
             return;
         }
 
-        const findRouteResults = findRoute(sanitizedTargetRoute)
-        if (findRouteResults) {
-            const { discoveredRoute, params } = findRouteResults;
+        const findClientRouteResults = findClientRoute(sanitizedTargetRoute)
+        if (findClientRouteResults) {
+            const { discoveredRoute, params } = findClientRouteResults;
             history.pushState({}, '', sanitizedTargetRoute);
             const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route export function
             if (typeof enterFunction !== 'function') {

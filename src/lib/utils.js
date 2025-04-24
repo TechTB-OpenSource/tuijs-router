@@ -6,7 +6,7 @@ import { routerConfig } from "./globals.js";
  * @returns {{ discoveredRoute: Object, params: Object } | null} 
  * An object containing the matched route (`discoveredRoute`) and extracted parameters (`params`) if a match is found; otherwise, `null`.
  */
-export function findRoute(sanitizedTargetRoute) {
+export function findClientRoute(sanitizedTargetRoute) {
     try {
         const routeList = routerConfig['routeList'];
         for (let i = 0; i < routeList.length; i++) {
@@ -19,7 +19,26 @@ export function findRoute(sanitizedTargetRoute) {
         }
         return null;
     } catch (er) {
-        console.error(`TUI Router Error: utils > findRoute`);
+        console.error(`TUI Router Error: utils > findClientRoute`);
+        console.error(er);
+        return;
+    }
+}
+
+export function findServerRoute(sanitizedTargetRoute) {
+    try {
+        const serverRouteList = routerConfig['serverRouteList'];
+        for (let i = 0; i < serverRouteList.length; i++) {
+            console.log(serverRouteList[i])
+            console.log(sanitizedTargetRoute)
+            const { matches, params } = matchRoute(serverRouteList[i], sanitizedTargetRoute);
+            if (matches) {
+                return { discoveredRoute: serverRouteList[i], params };
+            }
+        }
+        return null;
+    } catch (er) {
+        console.error(`TUI Router Error: utils > findServerRoute`);
         console.error(er);
         return;
     }

@@ -15,6 +15,7 @@ import {
     deleteRedirect,
     getRouterConfig,
     getRouteList,
+    getServerRouteList,
     getRouteNotFound,
     getRedirectList
 } from './lib/methods.js';
@@ -42,6 +43,7 @@ function createRouter() {
         deleteRedirect,
         getRouterConfig,
         getRouteList,
+        getServerRouteList,
         getRouteNotFound,
         getRedirectList,
         navigateTo,

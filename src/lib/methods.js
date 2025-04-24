@@ -249,15 +249,15 @@ export function replaceServerRoute(oldPath, newPath) {
 
 /**
  * Sets the routeNotFound Object in the routerConfig Object
- * @param {RouteNotFound} options - An Object containing routeNotFound options
+ * @param {RouteNotFound} newRouteNotFoundOptions - An Object containing routeNotFound options
  * @returns {boolean} Returns true on success and false on error.
  */
-export function setRouteNotFound(options) {
+export function setRouteNotFound(newRouteNotFoundOptions) {
     try {
-        if (!checkIsObject(options)) {
+        if (!checkIsObject(newRouteNotFoundOptions)) {
             throw new Error('Input must be an object.');
         }
-        const { server, path, ...rest } = options;
+        const { server, path, ...rest } = newRouteNotFoundOptions;
         if (Object.keys(rest).length > 0) {
             throw new Error(`Unexpected properties provided: ${Object.keys(rest).join(', ')}`);
         }
@@ -366,6 +366,14 @@ export function getRouterConfig() {
  */
 export function getRouteList() {
     return routerConfig['routeList'];
+}
+
+/**
+ * Returns the ServerRouteList array.
+ * @returns {ServerRouteList}
+ */
+export function getServerRouteList() {
+    return routerConfig['serverRouteList'];
 }
 
 /**
