@@ -9,7 +9,8 @@ import { navigateTo, navigateToNewTab, navigateToAnchorTag } from "./navigate.js
  */
 export function handleClickEvent(event) {
     try {
-        const anchor = event.target.closest('a'); // Find the closest <a> element
+        const path = event.composedPath?.() || [];
+        const anchor = path.find(el => el.tagName === 'A');
         if (anchor) {
             const href = anchor.getAttribute('href');
             const target = anchor.getAttribute('target');
