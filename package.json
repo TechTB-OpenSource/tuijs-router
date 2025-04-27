@@ -1,6 +1,6 @@
 {
   "name": "tuijs-router",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "A simple and easy to use client-side router for JavaScript.",
   "main": "src/index.js",
   "author": "TechTB",

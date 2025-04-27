@@ -48,7 +48,7 @@ declare module 'tuijs-router' {
         getRouteList: () => RouterConfig['routeList'];
         getRouteNotFound: () => RouterConfig['routeNotFound'];
         getRedirectList: () => RouterConfig['redirectList'];
-        navigateTo: (targetRoute: string, visitedPaths: Set<string>) => void;
+        navigateTo: (targetRoute: string, visitedPaths?: Set<string>) => void;
         navigateToNewTab: (route: string) => void;
         navigateToAnchorTag: (anchor: string) => void;
     }
