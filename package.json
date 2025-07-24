@@ -1,6 +1,6 @@
 {
   "name": "tuijs-router",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "A simple and easy to use client-side router for JavaScript.",
   "main": "src/index.js",
   "author": "TechTB",
@@ -9,7 +9,7 @@
   "type": "module",
   "types": "src/types.d.ts",
   "dependencies": {
-    "tuijs-event": "^0.1.5",
+    "tuijs-event": "^0.2.1",
     "tuijs-util": "^1.4.9"
   }
 }
