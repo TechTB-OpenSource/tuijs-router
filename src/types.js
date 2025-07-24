@@ -52,14 +52,3 @@ export const Redirect = {};
 export const RedirectList = []; // Array type
 export const RouterConfig = {};
 export const ActiveRoute = {};
-
-export {
-    Route,
-    RouteList,
-    RouteNotFound,
-    ServerRouteList,
-    Redirect,
-    RedirectList,
-    RouterConfig,
-    ActiveRoute
-}
