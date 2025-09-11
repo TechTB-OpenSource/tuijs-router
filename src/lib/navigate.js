@@ -1,4 +1,4 @@
-import { routerConfig, activeRoute } from './globals.js';
+import { routerConfig, activeRoute, routerState } from './globals.js';
 import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
 
 /**
@@ -7,13 +7,17 @@ import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
  * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
  * @returns {void}
  */
-export async function navigateTo(targetRoute, visitedPaths = new Set()) {
+export async function navigateTo(targetRoute, state = null, visitedPaths = new Set()) {
     try {
+        Object.keys(routerState).forEach(key => delete routerState[key]);
         const exitFunction = activeRoute.route?.exitFunction ?? null;
         const routeNotFound = routerConfig['routeNotFound'];
         const redirectList = routerConfig['redirectList'];
-        // If targetRoute is null 
         const sanitizedTargetRoute = sanitizePath(targetRoute);
+        if (state !== null && typeof state !== 'object') {
+            throw new Error(`The state parameter must be an object or null.`);
+        }
+        routerState = state;
         if (visitedPaths.size > 20) {
             console.error(`Maximum (20) redirects exceeded.`);
             visitedPaths.clear();
@@ -58,7 +62,7 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
         const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
         if (discoveredRedirect) {
             visitedPaths.add(sanitizedTargetRoute);
-            await navigateTo(discoveredRedirect['toPath'], visitedPaths);
+            navigateTo(discoveredRedirect['toPath'], state, visitedPaths);
             return;
         }
 
@@ -85,7 +89,7 @@ export async function navigateTo(targetRoute, visitedPaths = new Set()) {
             return;
         }
         visitedPaths.add(sanitizedTargetRoute);
-        await navigateTo(routeNotFound['path'], visitedPaths);
+        navigateTo(routeNotFound['path'], state, visitedPaths);
         return;
     } catch (er) {
         console.error(`TUI Router Error: methods > navigateTo`);

@@ -42,6 +42,10 @@
  * @property {Route} route
  */
 
+/**
+ * @typedef {Object} RouterState
+ */
+
 // Placeholder objects for the types (for runtime exports)
 // These match the actual type structure from JSDoc
 export const Route = {};
@@ -52,3 +56,4 @@ export const Redirect = {};
 export const RedirectList = []; // Array type
 export const RouterConfig = {};
 export const ActiveRoute = {};
+export const RouterState = {};

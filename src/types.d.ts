@@ -10,7 +10,7 @@ declare module 'tuijs-router' {
     }
 
     export type RouteList = Route[];
-    export type ServerRouteList = ServerRoute[];   
+    export type ServerRouteList = ServerRoute[];
     export interface RouteNotFound {
         server: boolean;
         path: string;
@@ -27,7 +27,8 @@ declare module 'tuijs-router' {
         fromPath: string;
         toPath: string;
     }
-    
+
+    export type RouterState = Record<string, any>;
 
     export interface RouterInstance {
         startRouter: () => boolean;
@@ -51,6 +52,9 @@ declare module 'tuijs-router' {
         navigateTo: (targetRoute: string, visitedPaths?: Set<string>) => void;
         navigateToNewTab: (route: string) => void;
         navigateToAnchorTag: (anchor: string) => void;
+        setRouterState: (state: RouterState) => void;
+        getRouterState: () => RouterState;
+        clearRouterState: () => void;
     }
 
     // The createRouter function returns a RouterInstance

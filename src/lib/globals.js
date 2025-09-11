@@ -18,3 +18,8 @@ export const routerConfig = {
 export const activeRoute = {
     routes: {}
 }
+
+/**
+ * @type {RouterState}
+ */
+export const routerState = {};
