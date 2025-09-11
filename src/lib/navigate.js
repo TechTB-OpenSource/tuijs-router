@@ -17,7 +17,9 @@ export async function navigateTo(targetRoute, state = null, visitedPaths = new S
         if (state !== null && typeof state !== 'object') {
             throw new Error(`The state parameter must be an object or null.`);
         }
-        routerState = state;
+        if (state !== null) {
+            Object.assign(routerState, state);
+        }
         if (visitedPaths.size > 20) {
             console.error(`Maximum (20) redirects exceeded.`);
             visitedPaths.clear();
