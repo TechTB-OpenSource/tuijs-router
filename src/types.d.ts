@@ -52,6 +52,7 @@ declare module 'tuijs-router' {
         navigateTo: (targetRoute: string, state?: RouterState | null, visitedPaths?: Set<string>) => void;
         navigateToNewTab: (route: string) => void;
         navigateToAnchorTag: (anchor: string) => void;
+        navigateBack: () => void;
         setRouterState: (state: RouterState) => void;
         getRouterState: () => RouterState;
         clearRouterState: () => void;

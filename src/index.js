@@ -25,7 +25,8 @@ import {
 import {
     navigateTo,
     navigateToNewTab,
-    navigateToAnchorTag
+    navigateToAnchorTag,
+    navigateBack
 } from './lib/navigate.js';
 
 /**
@@ -68,6 +69,7 @@ function createRouter() {
         navigateTo,
         navigateToNewTab,
         navigateToAnchorTag,
+        navigateBack,
         getRouterState,
         setRouterState,
         clearRouterState,

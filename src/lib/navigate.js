@@ -95,7 +95,7 @@ export async function navigateTo(targetRoute, state = null, visitedPaths = new S
         navigateTo(routeNotFound['path'], state, visitedPaths);
         return;
     } catch (er) {
-        console.error(`TUI Router Error: methods > navigateTo`);
+        console.error(`TUI Router Error: navigate > navigateTo`);
         console.error(er);
         return;
     }
@@ -118,7 +118,7 @@ export function navigateToNewTab(route) {
         }
         return;
     } catch (er) {
-        console.error(`TUI Router Error: handlers > navigateToNewTab`);
+        console.error(`TUI Router Error: navigate > navigateToNewTab`);
         console.error(er);
         return;
     }
@@ -140,8 +140,39 @@ export function navigateToAnchorTag(anchor) {
         elmId.scrollIntoView({ behavior: 'smooth' });
         return;
     } catch (er) {
-        console.error(`TUI Router Error: handlers > handleAnchorTag`);
+        console.error(`TUI Router Error: navigate > navigateToAnchorTag`);
         console.error(er);
         return;
+    }
+}
+
+/**
+ * Navigates back to the previous page or to the root if no referrer exists.
+ * Uses the browser's history API and delegates to navigateTo to maintain router state.
+ * @returns {void}
+ */
+export function navigateBack() {
+    try {
+        // Check if there's any history to go back to
+        if (window.history.length > 1) {
+            // Use a temporary popstate listener to capture where we're going
+            const handlePopState = () => {
+                window.removeEventListener('popstate', handlePopState);
+                const currentPath = location.pathname + location.search + location.hash;
+                // Use navigateTo to ensure all router state management happens
+                navigateTo(currentPath);
+            };
+            
+            window.addEventListener('popstate', handlePopState);
+            window.history.back();
+        } else {
+            // No history available, go to root
+            navigateTo('/');
+        }
+    } catch (er) {
+        console.error(`TUI Router Error: navigate > navigateBack`);
+        console.error(er);
+        // Fallback to root page
+        navigateTo('/');
     }
 }
