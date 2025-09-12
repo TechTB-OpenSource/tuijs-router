@@ -43,7 +43,7 @@
  */
 
 /**
- * @typedef {Object} RouterState
+ * @typedef {Record<string, any>} RouterState
  */
 
 // Placeholder objects for the types (for runtime exports)

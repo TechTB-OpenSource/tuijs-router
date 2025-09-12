@@ -4,6 +4,7 @@ import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
 /**
  * Handles the routing logic. This is the core of the router.
  * @param {string} targetRoute - The route to navigate to.
+ * @param {RouterState|null} [state=null] - An optional state object to be associated with the route.
  * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
  * @returns {void}
  */
