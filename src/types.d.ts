@@ -49,11 +49,11 @@ declare module 'tuijs-router' {
         getRouteList: () => RouterConfig['routeList'];
         getRouteNotFound: () => RouterConfig['routeNotFound'];
         getRedirectList: () => RouterConfig['redirectList'];
-        navigateTo: (targetRoute: string, state?: stateData | null, visitedPaths?: Set<string>) => void;
+        navigateTo: (targetRoute: string, data?: stateData | null, visitedPaths?: Set<string>) => void;
         navigateToNewTab: (route: string) => void;
         navigateToAnchorTag: (anchor: string) => void;
         navigateBack: () => void;
-        setState: (state: stateData) => void;
+        setState: (data: stateData) => void;
         getState: () => stateData;
         clearState: () => void;
     }

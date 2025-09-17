@@ -4,7 +4,7 @@ import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
 /**
  * Handles the routing logic. This is the core of the router.
  * @param {string} targetRoute - The route to navigate to.
- * @param {stateData|null} [state=null] - An optional state object to be associated with the route.
+ * @param {stateData|null} [data=null] - An optional state object to be associated with the route.
  * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
  * @returns {void}
  */
@@ -65,7 +65,7 @@ export async function navigateTo(targetRoute, data = null, visitedPaths = new Se
         const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
         if (discoveredRedirect) {
             visitedPaths.add(sanitizedTargetRoute);
-            navigateTo(discoveredRedirect['toPath'], state, visitedPaths);
+            navigateTo(discoveredRedirect['toPath'], data, visitedPaths);
             return;
         }
 
@@ -92,7 +92,7 @@ export async function navigateTo(targetRoute, data = null, visitedPaths = new Se
             return;
         }
         visitedPaths.add(sanitizedTargetRoute);
-        navigateTo(routeNotFound['path'], state, visitedPaths);
+        navigateTo(routeNotFound['path'], data, visitedPaths);
         return;
     } catch (er) {
         console.error(`TUI Router Error: navigate > navigateTo`);
