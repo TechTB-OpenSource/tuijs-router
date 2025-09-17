@@ -3,7 +3,7 @@
 ***TUIJS-Router is currently pre-release. Expect breaking changes.***
 ***TUIJS-Router is built with modules. A bundler is recommended.***
 
-***Last Updated 04/21/2025***
+***Last Updated 09/17/2025***
 <br>
 <br>
 
