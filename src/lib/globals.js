@@ -20,6 +20,6 @@ export const activeRoute = {
 }
 
 /**
- * @type {RouterState}
+ * @type {StateData}
  */
-export const routerState = {};
+export const stateData = {};

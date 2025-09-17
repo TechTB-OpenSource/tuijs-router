@@ -43,7 +43,7 @@
  */
 
 /**
- * @typedef {Record<string, any>} RouterState
+ * @typedef {Record<string, any>} StateData
  */
 
 // Placeholder objects for the types (for runtime exports)
@@ -56,4 +56,4 @@ export const Redirect = {};
 export const RedirectList = []; // Array type
 export const RouterConfig = {};
 export const ActiveRoute = {};
-export const RouterState = {};
+export const StateData = {};

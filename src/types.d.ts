@@ -28,7 +28,7 @@ declare module 'tuijs-router' {
         toPath: string;
     }
 
-    export type RouterState = Record<string, any>;
+    export type StateData = Record<string, any>;
 
     export interface RouterInstance {
         startRouter: () => boolean;
@@ -49,13 +49,13 @@ declare module 'tuijs-router' {
         getRouteList: () => RouterConfig['routeList'];
         getRouteNotFound: () => RouterConfig['routeNotFound'];
         getRedirectList: () => RouterConfig['redirectList'];
-        navigateTo: (targetRoute: string, state?: RouterState | null, visitedPaths?: Set<string>) => void;
+        navigateTo: (targetRoute: string, state?: stateData | null, visitedPaths?: Set<string>) => void;
         navigateToNewTab: (route: string) => void;
         navigateToAnchorTag: (anchor: string) => void;
         navigateBack: () => void;
-        setRouterState: (state: RouterState) => void;
-        getRouterState: () => RouterState;
-        clearRouterState: () => void;
+        setState: (state: stateData) => void;
+        getState: () => stateData;
+        clearState: () => void;
     }
 
     // The createRouter function returns a RouterInstance

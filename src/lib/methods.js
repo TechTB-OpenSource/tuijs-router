@@ -1,5 +1,5 @@
 import { checkIsArray, checkIsObject } from 'tuijs-util';
-import { eventInstance, routerConfig, routerState } from './globals.js';
+import { eventInstance, routerConfig, stateData } from './globals.js';
 import { handleClickEvent } from './handlers.js';
 import { navigateTo } from "./navigate.js";
 
@@ -393,32 +393,32 @@ export function getRedirectList() {
 }
 
 /**
- * Sets the RouterState Object.
+ * Sets the stateData Object.
  * @returns {void}
  */
-export function setRouterState(state) {
-    if (typeof state !== 'object') {
+export function setState(data) {
+    if (typeof data !== 'object') {
         console.error(`The state parameter must be an object or null.`);
         return;
     }
-    Object.keys(routerState).forEach(key => delete routerState[key]);
-    Object.assign(routerState, state);
+    Object.keys(stateData).forEach(key => delete stateData[key]);
+    Object.assign(stateData, data);
     return;
 }
 
 /**
- * Returns the RouterState Object.
- * @returns {RouterState}
+ * Returns the stateData Object.
+ * @returns {StateData}
  */
-export function getRouterState() {
-    return routerState;
+export function getState() {
+    return stateData;
 }
 
 /**
- * Clears the RouterState Object.
+ * Clears the stateData Object.
  * @returns {void}
  */
-export function clearRouterState() {
-    Object.keys(routerState).forEach(key => delete routerState[key]);
+export function clearState() {
+    Object.keys(stateData).forEach(key => delete stateData[key]);
     return;
 }

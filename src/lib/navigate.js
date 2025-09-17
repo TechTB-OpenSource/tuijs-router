@@ -1,25 +1,25 @@
-import { routerConfig, activeRoute, routerState } from './globals.js';
+import { routerConfig, activeRoute, stateData } from './globals.js';
 import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
 
 /**
  * Handles the routing logic. This is the core of the router.
  * @param {string} targetRoute - The route to navigate to.
- * @param {RouterState|null} [state=null] - An optional state object to be associated with the route.
+ * @param {stateData|null} [state=null] - An optional state object to be associated with the route.
  * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
  * @returns {void}
  */
-export async function navigateTo(targetRoute, state = null, visitedPaths = new Set()) {
+export async function navigateTo(targetRoute, data = null, visitedPaths = new Set()) {
     try {
-        Object.keys(routerState).forEach(key => delete routerState[key]);
+        Object.keys(stateData).forEach(key => delete stateData[key]);
         const exitFunction = activeRoute.route?.exitFunction ?? null;
         const routeNotFound = routerConfig['routeNotFound'];
         const redirectList = routerConfig['redirectList'];
         const sanitizedTargetRoute = sanitizePath(targetRoute);
-        if (state !== null && typeof state !== 'object') {
+        if (data !== null && typeof data !== 'object') {
             throw new Error(`The state parameter must be an object or null.`);
         }
-        if (state !== null) {
-            Object.assign(routerState, state);
+        if (data !== null) {
+            Object.assign(stateData, data);
         }
         if (visitedPaths.size > 20) {
             console.error(`Maximum (20) redirects exceeded.`);

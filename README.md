@@ -12,7 +12,7 @@ The TUIJS-Router is flexible and can handle all routes, or if desired, it can be
 1. The easiest way to get started is to configure you server to respond to explicit server routes, then return your index.html for all other requests. ***Further configuration is recommended for a production app.***
 2. On the client side app import the 'createRouter' function from 'tuijs-router', then create a new instance.
 
-3. Again on the client side use the set functions to apply your router initial router configuration to your router instance.
+3. On the client side use the set functions to apply your router initial router configuration to your router instance.
     - **setRouteList** - Sets the route list Array. This array contains Objects which each define a single route. The structure for each object is path, enterFunction, exitFunction(optional).
         - "path" - string - Defines the route path.
         - "enterFunction" - Function - Will be executed when the route is navigated to. This is the core of where routed changes occur. Any desired validations should be at the beginning of this Function.
@@ -29,26 +29,35 @@ The TUIJS-Router is flexible and can handle all routes, or if desired, it can be
         - "toPath" - string - Defines the pathe to be redirected to.
 
 4. Start the router instance. This initiates the router eventListeners and the first route.
+5. If data needs to be passed between routes, use the **navigateTo** method and set the optional data parameter. on the resulting page you can use the **getData** method, on the same router instance, in order to collect the data.
 <br>
 <br>
 
-### Client example using standard JavaScript.
+### Client example using JavaScript.
 ```js
 import { tuiRouter } from 'tuijs-router';
+import { renderPageHome, leavePageHome } from '/home.js';
+import { renderPageAbout } from '/about.js';
+import { renderPageContact } from '/contact.js';
+import { renderPageDocsIntro, renderPageDocsMore } from '/docs.js';
+import { renderPageUsers } from '/contact.js';
+
 const routerInstance = tuiRouter();
 
 routerInstance.setRouteList([
-    { path: '/', enterFunction: renderPageHome, exitFunction: leaverPageHome },
+    { path: '/', enterFunction: renderPageHome, exitFunction: leavePageHome },
     { path: '/about', enterFunction: renderPageAbout },
     { path: '/contact', enterFunction: renderPageContact },
     { path: '/docs/intro', enterFunction: renderPageDocsIntro },
-    { path: '/docs/:page-name', enterFunction: renderPageDocs },
-    { path: '/docs/intro', enterFunction: renderPageServicesIntro },
-    { path: '/services/:page-name', enterFunction: renderPageServices },
+    { path: '/docs/more', enterFunction: renderPageDocsMore },
+    { path: '/users/:page-name', enterFunction: () => {
+            const pageData = routerInstance.getState();
+            renderPageUsers(pageData);
+        }
+    },
 ]);
 routerInstance.setServerRouteList([
-    '/api/server-route-1',
-    '/api/server-route-2'
+    '/server-only-route',
 ]);
 routerInstance.setRouteNotFound({
     server: true,
@@ -58,51 +67,11 @@ routerInstance.setRedirectList([
     {
         fromPath: '/docs',
         toPath: '/docs/intro'
-    },
-    {
-        fromPath: '/services',
-        toPath: '/services/intro'
     }
 ]);
 
 routerInstance.startRouter();
 ```
-
-### Server example using Node.js.
-```js
-const express = require('express');
-const path = require('path');
-
-const app = express();
-const dirProjectRoot = path.join(__dirname, '..');
-const siteRoot = path.join(dirProjectRoot, '/public');
-
-app.use(express.static(siteRoot));
-
-app.get('/404', function (req, res) {
-    res.status(404).sendFile(path.join(siteRoot, '/404.html'));
-});
-
-app.get('/api/server-route-1', function (req, res) {
-    res.status(200).send('server-route-1');
-});
-
-app.get('/api/server-route-2', function (req, res) {
-    res.status(200).send('server-route-2');
-});
-
-app.get('*', (req, res, next) => {
-    const requestPath = req.path;
-    if (path.extname(requestPath)) {
-        return res.status(404).sendFile(path.join(siteRoot, '/404.html'));
-    }
-    res.status(200).sendFile(path.join(siteRoot, '/index.html'));
-});
-
-app.listen(3000);
-```
-<br>
-<br>
 
 ## Notes:
 - ***IT IS NOT RECOMMENDED TO USE DYNAMIC ROUTES AT THE ROOT. THIS CAN BREAK ROUTING, CREATE ROUTING LOOPS, OR CAUSE SEO ISSUES.***
@@ -219,6 +188,7 @@ app.listen(3000);
 <br>
 
 ### deleteRedirect
+
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
 | fromPath     | string   | The redirect object to be deleted         |
@@ -246,6 +216,28 @@ app.listen(3000);
 <br>
 
 ### getRedirectList
+
+| Parameters |
+|------------|
+| None       |
+<br>
+
+### setState
+
+| Parameters   | Type     | Description                                                               |
+|--------------|----------|---------------------------------------------------------------------------|
+| targetRoute  | Object   | The state data to be set (Global to the router)                           |
+<br>
+
+### getState
+
+| Parameters |
+|------------|
+| None       |
+<br>
+
+### clearState
+
 | Parameters |
 |------------|
 | None       |
@@ -256,6 +248,7 @@ app.listen(3000);
 | Parameters   | Type     | Description                                                               |
 |--------------|----------|---------------------------------------------------------------------------|
 | targetRoute  | string   | The route/path to be navigated to                                         |
+| data         | Object   | State data to be passed to the destination route (optional)               |
 | visitedPaths | Set      | A list of visited paths designed to prevent infinite route loops (20 Max) |
 <br>
 
@@ -264,3 +257,11 @@ app.listen(3000);
 | Parameters   | Type     | Description                 |
 |--------------|----------|-----------------------------|
 | anchor       | string   | The hash to be navigated to |
+<br>
+
+### NavigateBack
+
+| Parameters |
+|------------|
+| None       |
+<br>

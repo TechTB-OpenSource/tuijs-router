@@ -18,9 +18,9 @@ import {
     getServerRouteList,
     getRouteNotFound,
     getRedirectList,
-    getRouterState,
-    setRouterState,
-    clearRouterState,
+    getState,
+    setState,
+    clearState,
 } from './lib/methods.js';
 import {
     navigateTo,
@@ -38,7 +38,7 @@ import {
  * @typedef {import('./types.js').RedirectList} RedirectList
  * @typedef {import('./types.js').RouterConfig} RouterConfig
  * @typedef {import('./types.js').ActiveRoute} ActiveRoute
- * @typedef {import('./types.js').RouterState} RouterState
+ * @typedef {import('./types.js').StateData} StateData
  */
 
 /**
@@ -70,9 +70,9 @@ function createRouter() {
         navigateToNewTab,
         navigateToAnchorTag,
         navigateBack,
-        getRouterState,
-        setRouterState,
-        clearRouterState,
+        getState,
+        setState,
+        clearState,
     }
 }
 
@@ -89,5 +89,5 @@ export {
     RedirectList,
     RouterConfig,
     ActiveRoute,
-    RouterState
+    StateData
 } from './types.js';
