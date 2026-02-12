@@ -34,10 +34,15 @@ export async function navigateTo(targetRoute, data = null, visitedPaths = new Se
             navigateTo('/');
             return;
         }
-        // If there is no history add update history (Initial page load)
-        if (!history.state) {
+
+        // If we're already on the target route, update current entry (initial load)
+        // If we're navigating to a different route, create new entry
+        const currentPath = window.location.pathname + window.location.search + window.location.hash;
+        const isCurrentRoute = currentPath === sanitizedTargetRoute;
+        if (isCurrentRoute && !history.state && history.length <= 1) {
             history.replaceState({}, '', sanitizedTargetRoute);
         }
+
         // If there is an exit export function, execute it.
         if (exitFunction) {
             if (typeof exitFunction !== 'function') {
@@ -162,7 +167,7 @@ export function navigateBack() {
                 // Use navigateTo to ensure all router state management happens
                 navigateTo(currentPath);
             };
-            
+
             window.addEventListener('popstate', handlePopState);
             window.history.back();
         } else {
