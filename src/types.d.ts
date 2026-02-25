@@ -61,4 +61,5 @@ declare module 'tuijs-router' {
     // The createRouter function returns a RouterInstance
     export function createRouter(): RouterInstance;
     export { createRouter as tuiRouter };
+    export { createRouter as createRouterInstance };
 }

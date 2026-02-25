@@ -78,6 +78,7 @@ function createRouter() {
 
 export { createRouter };
 export { createRouter as tuiRouter };
+export { createRouter as createRouterInstance };
 
 // Export types for TypeScript consumers
 export {
