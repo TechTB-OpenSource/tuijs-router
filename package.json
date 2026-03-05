@@ -2,15 +2,22 @@
   "name": "tuijs-router",
   "version": "0.9.0",
   "description": "A simple and easy to use client-side router for JavaScript.",
-  "main": "src/index.js",
-  "author": "TechTB",
+  "author": "TechTB LLC",
   "license": "MIT",
   "repository": "github:TechTB-OpenSource/tuijs-router",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsc",
-    "sitemap": "node ./bin/index.js"
+    "build": "npm run clean && tsc"
   },
   "dependencies": {
     "tuijs-event": "^0.2.1",
