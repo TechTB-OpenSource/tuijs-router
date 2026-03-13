@@ -33,3 +33,18 @@ export interface ActiveRoute {
 }
 
 export type StateData = Record<string, any>;
+
+export interface RouteMatchResult {
+    matches: boolean;
+    params?: Record<string, any>;
+}
+
+export interface DiscoverClientRouteResult {
+    discoveredRoute: Route;
+    params?: Record<string, any>;
+}
+
+export interface DiscoveredServerRouteResult {
+    discoveredRoute: string;
+    params?: Record<string, any>;
+}

@@ -1,3 +1,4 @@
+import type { Route, RouteNotFound, RedirectList } from './models.js';
 import { routerConfig, activeRoute, stateData } from './globals.js';
 import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
 
@@ -8,16 +9,13 @@ import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
  * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
  * @returns {void}
  */
-export async function navigateTo(targetRoute, data = null, visitedPaths = new Set()) {
+export async function navigateTo(targetRoute: string, data: Record<string, any> | null = null, visitedPaths: Set<string> = new Set()) {
     try {
         Object.keys(stateData).forEach(key => delete stateData[key]);
-        const exitFunction = activeRoute.route?.exitFunction ?? null;
-        const routeNotFound = routerConfig['routeNotFound'];
-        const redirectList = routerConfig['redirectList'];
-        const sanitizedTargetRoute = sanitizePath(targetRoute);
-        if (data !== null && typeof data !== 'object') {
-            throw new Error(`The state parameter must be an object or null.`);
-        }
+        const exitFunction: Function | null = activeRoute.route?.exitFunction ?? null;
+        const routeNotFound: RouteNotFound = routerConfig['routeNotFound'];
+        const redirectList: RedirectList = routerConfig['redirectList'];
+        const sanitizedTargetRoute: string = sanitizePath(targetRoute);
         if (data !== null) {
             Object.assign(stateData, data);
         }
@@ -35,10 +33,10 @@ export async function navigateTo(targetRoute, data = null, visitedPaths = new Se
             return;
         }
 
-        // If we're already on the target route, update current entry (initial load)
-        // If we're navigating to a different route, create new entry
-        const currentPath = window.location.pathname + window.location.search + window.location.hash;
-        const isCurrentRoute = currentPath === sanitizedTargetRoute;
+        // If already on the target route, update current entry (initial load)
+        // If navigating to a different route, create new entry
+        const currentPath: string = window.location.pathname + window.location.search + window.location.hash;
+        const isCurrentRoute: boolean = currentPath === sanitizedTargetRoute;
         if (isCurrentRoute && !history.state && history.length <= 1) {
             history.replaceState({}, '', sanitizedTargetRoute);
         }
