@@ -1,129 +1,100 @@
-import type { Route, RouteNotFound, RedirectList } from './models.js';
+import type { Route, RouteNotFound, Redirect, RedirectList, DiscoverClientRouteResult, DiscoveredServerRouteResult } from './models.js';
 import { routerConfig, activeRoute, stateData } from './globals.js';
 import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
 
 /**
  * Handles the routing logic. This is the core of the router.
- * @param {string} targetRoute - The route to navigate to.
- * @param {stateData|null} [data=null] - An optional state object to be associated with the route.
- * @param {Set<string>} [visitedPaths=new Set()] - A set of paths that have already been visited to prevent infinite loops.
- * @returns {void}
  */
-export async function navigateTo(targetRoute: string, data: Record<string, any> | null = null, visitedPaths: Set<string> = new Set()) {
-    try {
-        Object.keys(stateData).forEach(key => delete stateData[key]);
-        const exitFunction: Function | null = activeRoute.route?.exitFunction ?? null;
-        const routeNotFound: RouteNotFound = routerConfig['routeNotFound'];
-        const redirectList: RedirectList = routerConfig['redirectList'];
-        const sanitizedTargetRoute: string = sanitizePath(targetRoute);
-        if (data !== null) {
-            Object.assign(stateData, data);
-        }
-        if (visitedPaths.size > 20) {
-            console.error(`Maximum (20) redirects exceeded.`);
-            visitedPaths.clear();
-            return;
-        }
-        // Check for infinite route loop
-        if (visitedPaths.has(sanitizedTargetRoute)) {
-            console.error(`TUI Router: Infinite redirect detected for path: ${sanitizedTargetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
-            console.error(`Visited Paths: ${visitedPaths}`)
-            visitedPaths.clear();
-            navigateTo('/');
-            return;
-        }
-
-        // If already on the target route, update current entry (initial load)
-        // If navigating to a different route, create new entry
-        const currentPath: string = window.location.pathname + window.location.search + window.location.hash;
-        const isCurrentRoute: boolean = currentPath === sanitizedTargetRoute;
-        if (isCurrentRoute && !history.state && history.length <= 1) {
-            history.replaceState({}, '', sanitizedTargetRoute);
-        }
-
-        // If there is an exit export function, execute it.
-        if (exitFunction) {
-            if (typeof exitFunction !== 'function') {
-                console.error(`The exitFunction value of this route MUST be a export function.`); // Allows the error to be non blocking
-                return;
-            }
-            await exitFunction();
-        }
-
-        // If route not found path is explicitly called and the server boolean is true.
-        // This prevents the dev from needing to add the route not found path to the server route list explicitly.
-        if (sanitizedTargetRoute === routeNotFound['path'] && routeNotFound['server'] === true) {
-            window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
-            return;
-        }
-
-        // If a route on the server route list is explicitly called.
-        const findServerRouteResults = findServerRoute(sanitizedTargetRoute)
-        if (findServerRouteResults) {
-            window.location.href = sanitizedTargetRoute; // Send request to server if route isn found and serverRouteList 
-            return;
-        }
-
-        // If a matching redirect is discovered in a matching redirect list.
-        const discoveredRedirect = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
-        if (discoveredRedirect) {
-            visitedPaths.add(sanitizedTargetRoute);
-            navigateTo(discoveredRedirect['toPath'], data, visitedPaths);
-            return;
-        }
-
-        const findClientRouteResults = findClientRoute(sanitizedTargetRoute)
-        if (findClientRouteResults) {
-            const { discoveredRoute, params } = findClientRouteResults;
-            history.pushState({}, '', sanitizedTargetRoute);
-            const enterFunction = discoveredRoute['enterFunction']; // Attempts to store the route export function
-            if (typeof enterFunction !== 'function') {
-                console.error(`The enterFunction value of this route MUST be a export function.`); // Allows the error to be non blocking
-                return;
-            }
-            await enterFunction(params); // Call route export function that corresponds to 'routeList' variable
-            activeRoute['route'] = discoveredRoute;
-            visitedPaths.clear();
-            if (params['anchor']) {
-                navigateToAnchorTag(params['anchor']);
-            }
-            return;
-        }
-        // If no route is found
-        if (routeNotFound['server'] === true) {
-            window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
-            return;
-        }
-        visitedPaths.add(sanitizedTargetRoute);
-        navigateTo(routeNotFound['path'], data, visitedPaths);
-        return;
-    } catch (er) {
-        console.error(`TUI Router Error: navigate > navigateTo`);
-        console.error(er);
+export async function navigateTo(targetRoute: string, data: Record<string, any> | null = null, visitedPaths: Set<string> = new Set()): Promise<void> {
+    Object.keys(stateData).forEach(key => delete stateData[key]);
+    const exitFunction: Function | null = activeRoute.route?.exitFunction ?? null;
+    const routeNotFound: RouteNotFound = routerConfig['routeNotFound'];
+    const redirectList: RedirectList = routerConfig['redirectList'];
+    const sanitizedTargetRoute: string = sanitizePath(targetRoute);
+    if (data !== null) {
+        Object.assign(stateData, data);
+    }
+    if (visitedPaths.size > 20) {
+        console.error(`Maximum (20) redirects exceeded.`);
+        visitedPaths.clear();
         return;
     }
+    // Check for infinite route loop
+    if (visitedPaths.has(sanitizedTargetRoute)) {
+        console.error(`TUI Router: Infinite redirect detected for path: ${sanitizedTargetRoute}`); // DO NOT throw error or end execution as that would break loop testing.
+        console.error(`Visited Paths: ${visitedPaths}`)
+        visitedPaths.clear();
+        navigateTo('/');
+        return;
+    }
+
+    // If already on the target route, update current entry (initial load)
+    // If navigating to a different route, create new entry
+    const currentPath: string = window.location.pathname + window.location.search + window.location.hash;
+    const isCurrentRoute: boolean = currentPath === sanitizedTargetRoute;
+    if (isCurrentRoute && !history.state && history.length <= 1) {
+        history.replaceState({}, '', sanitizedTargetRoute);
+    }
+
+    // If there is an exit export function, execute it.
+    if (exitFunction) {
+        await exitFunction();
+    }
+
+    // If route not found path is explicitly called and the server boolean is true.
+    // This prevents the dev from needing to add the route not found path to the server route list explicitly.
+    if (sanitizedTargetRoute === routeNotFound['path'] && routeNotFound['server'] === true) {
+        window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
+        return;
+    }
+
+    // If a route on the server route list is explicitly called.
+    const findServerRouteResults: DiscoveredServerRouteResult | null = findServerRoute(sanitizedTargetRoute)
+    if (findServerRouteResults) {
+        window.location.href = sanitizedTargetRoute; // Send request to server if route isn found and serverRouteList 
+        return;
+    }
+
+    // If a matching redirect is discovered in a matching redirect list.
+    const discoveredRedirect: Redirect | undefined = redirectList.find(redirect => redirect['fromPath'] === sanitizedTargetRoute);
+    if (discoveredRedirect) {
+        visitedPaths.add(sanitizedTargetRoute);
+        navigateTo(discoveredRedirect['toPath'], data, visitedPaths);
+        return;
+    }
+
+    const findClientRouteResults: DiscoverClientRouteResult | null = findClientRoute(sanitizedTargetRoute)
+    if (findClientRouteResults) {
+        const { discoveredRoute, params }: DiscoverClientRouteResult = findClientRouteResults;
+        history.pushState({}, '', sanitizedTargetRoute);
+        const enterFunction: Function = discoveredRoute['enterFunction']; // Attempts to store the route export function
+        await enterFunction(params); // Call route export function that corresponds to 'routeList' variable
+        activeRoute['route'] = discoveredRoute;
+        visitedPaths.clear();
+        if (params && params['anchor']) {
+            navigateToAnchorTag(params['anchor']);
+        }
+        return;
+    }
+    // If no route is found
+    if (routeNotFound['server'] === true) {
+        window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
+        return;
+    }
+    visitedPaths.add(sanitizedTargetRoute);
+    navigateTo(routeNotFound['path'], data, visitedPaths);
 }
 
 /**
 * Allows the client side router to open a page in a new tab
-* @param {string} route - Path to the route
-* @returns  {void}
-* @throws {Error} - If an error occurs.
 */
-export function navigateToNewTab(route) {
-    try {
-        const newTab = window.open('', '_blank');
-        const newUrl = `${window.location.origin}${route}`;
-        if (newTab) {
-            newTab.location.href = newUrl;
-        } else {
-            throw new Error('Pop-up blocked or new tab could not be opened.');
-        }
-        return;
-    } catch (er) {
-        console.error(`TUI Router Error: navigate > navigateToNewTab`);
-        console.error(er);
-        return;
+export function navigateToNewTab(route: string): void {
+    const newTab: Window | null = window.open('', '_blank');
+    const newUrl: string = `${window.location.origin}${route}`;
+    if (newTab) {
+        newTab.location.href = newUrl;
+    } else {
+        throw new Error('Pop-up blocked or new tab could not be opened.');
     }
 }
 

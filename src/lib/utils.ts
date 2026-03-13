@@ -1,29 +1,29 @@
-import type { Route, RouteList, RouteMatchResult, ServerRouteList, DiscoverRouteResult } from "./models.js";
+import type { Route, RouteList, RouteMatchResult, ServerRouteList, DiscoverClientRouteResult, DiscoveredServerRouteResult } from "./models.js";
 import { routerConfig } from "./globals.js";
 
 /**
  * Attempts to find a sanitized target route within the router configuration object.
  * An object containing the matched route (`discoveredRoute`) and extracted parameters (`params`) if a match is found; otherwise, `null`.
  */
-export function findClientRoute(sanitizedTargetRoute: string): DiscoverRouteResult | null {
+export function findClientRoute(sanitizedTargetRoute: string): DiscoverClientRouteResult | null {
     const routeList: RouteList = routerConfig['routeList'];
     for (let i = 0; i < routeList.length; i++) {
         const testRouteObject: Route = routeList[i];
         const testRoutePath: string = routeList[i]['path'];
         const { matches, params }: RouteMatchResult = matchRoute(testRoutePath, sanitizedTargetRoute);
         if (matches) {
-            return { discoveredRoute: testRouteObject, params } as DiscoverRouteResult;
+            return { discoveredRoute: testRouteObject, params } as DiscoverClientRouteResult;
         }
     }
     return null;
 }
 
-export function findServerRoute(sanitizedTargetRoute: string): DiscoverRouteResult | null {
+export function findServerRoute(sanitizedTargetRoute: string): DiscoveredServerRouteResult | null {
     const serverRouteList: ServerRouteList = routerConfig['serverRouteList'];
     for (let i = 0; i < serverRouteList.length; i++) {
         const { matches, params }: RouteMatchResult = matchRoute(serverRouteList[i], sanitizedTargetRoute);
         if (matches) {
-            return { discoveredRoute: serverRouteList[i], params } as DiscoverRouteResult;
+            return { discoveredRoute: serverRouteList[i], params } as DiscoveredServerRouteResult;
         }
     }
     return null;
