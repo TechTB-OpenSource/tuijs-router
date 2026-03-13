@@ -1,9 +1,11 @@
 # TUIJS-Router
-## A simple and easy to use client-side router for JavaScript.
-***TUIJS-Router is currently pre-release. Expect breaking changes.***
-***TUIJS-Router is built with modules. A bundler is recommended.***
-
 ***Last Updated 09/17/2025***
+
+## Description
+A simple and easy to use client-side router for JavaScript.
+
+***TUIJS-Router is currently pre-release. Expect breaking changes.***
+
 <br>
 <br>
 

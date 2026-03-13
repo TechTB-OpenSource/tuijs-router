@@ -1,25 +1,17 @@
+import type { Route, RouterConfig, ActiveRoute, StateData } from './models.js';
 import { tuiEvent } from 'tuijs-event';
 
 export const eventInstance = tuiEvent();
 
-/**
- * @type {RouterConfig}
- */
-export const routerConfig = {
+export const routerConfig: RouterConfig = {
     routeList: [],
     serverRouteList: [],
     routeNotFound: { server: true, path: '/404' },
     redirectList: []
 }
 
-/**
- * @type {ActiveRoute}
- */
-export const activeRoute = {
-    routes: {}
+export const activeRoute: ActiveRoute = {
+    route: {} as Route
 }
 
-/**
- * @type {StateData}
- */
-export const stateData = {};
+export const stateData: StateData = {};

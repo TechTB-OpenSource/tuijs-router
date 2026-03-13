@@ -17,11 +17,12 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsc"
+    "build": "npm run clean && tsc",
+    "deploy": "npm run build && npm publish"
   },
   "dependencies": {
-    "tuijs-event": "^0.2.1",
-    "tuijs-util": "^1.5.1"
+    "tuijs-event": "^0.3.0",
+    "tuijs-util": "^2.0.0"
   },
   "devDependencies": {
     "rimraf": "^6.1.3",
