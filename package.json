@@ -21,7 +21,7 @@
     "deploy": "npm run build && npm publish"
   },
   "dependencies": {
-    "tuijs-event": "^0.3.0",
+    "tuijs-event": "^0.3.1",
     "tuijs-util": "^2.0.0"
   },
   "devDependencies": {
