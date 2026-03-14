@@ -1,1 +1,1 @@
-{"version":3,"file":"createInstance.d.ts","sourceRoot":"","sources":["../../src/lib/createInstance.ts"],"names":[],"mappings":"AAQA,wBAAgB,oBAAoB,OAInC"}
+{"version":3,"file":"createInstance.d.ts","sourceRoot":"","sources":["../../src/lib/createInstance.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,OAAO,MAAM,cAAc,CAAC;AACxC,OAAO,KAAK,QAAQ,MAAM,eAAe,CAAC;AAG1C,wBAAgB,oBAAoB;;;;;;;;;;;;;;;;;;;;;;;;;;EAyDnC"}

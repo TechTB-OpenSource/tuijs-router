@@ -1,2 +1,30 @@
-export declare function createRouterInstance(): {};
+import * as METHODS from './methods.js';
+import * as NAVIGATE from './navigate.js';
+export declare function createRouterInstance(): {
+    startRouter: typeof METHODS.startRouter;
+    stopRouter: typeof METHODS.stopRouter;
+    setRouteList: typeof METHODS.setRouteList;
+    addRoute: typeof METHODS.addRoute;
+    deleteRoute: typeof METHODS.deleteRoute;
+    setServerRouteList: typeof METHODS.setServerRouteList;
+    addServerRoute: typeof METHODS.addServerRoute;
+    deleteServerRoute: typeof METHODS.deleteServerRoute;
+    replaceServerRoute: typeof METHODS.replaceServerRoute;
+    setRouteNotFound: typeof METHODS.setRouteNotFound;
+    setRedirectList: typeof METHODS.setRedirectList;
+    addRedirect: typeof METHODS.addRedirect;
+    deleteRedirect: typeof METHODS.deleteRedirect;
+    getRouterConfig: typeof METHODS.getRouterConfig;
+    getRouteList: typeof METHODS.getRouteList;
+    getServerRouteList: typeof METHODS.getServerRouteList;
+    getRouteNotFound: typeof METHODS.getRouteNotFound;
+    getRedirectList: typeof METHODS.getRedirectList;
+    setState: typeof METHODS.setState;
+    getState: typeof METHODS.getState;
+    clearState: typeof METHODS.clearState;
+    navigateTo: typeof NAVIGATE.navigateTo;
+    navigateToNewTab: typeof NAVIGATE.navigateToNewTab;
+    navigateToAnchorTag: typeof NAVIGATE.navigateToAnchorTag;
+    navigateBack: typeof NAVIGATE.navigateBack;
+};
 //# sourceMappingURL=createInstance.d.ts.map
