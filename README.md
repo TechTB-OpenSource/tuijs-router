@@ -1,8 +1,8 @@
 # TUIJS-Router
-***Last Updated 09/17/2025***
+***Last Updated 03/14/2026***
 
 ## Description
-A simple and easy to use client-side router for JavaScript.
+A simple and easy to use client-side router for JavaScript. TUIJS-Router is flexible and can be used with vanilla Javascript or with most front end frameworks. TUIJS-Router also works great with TypeScript project.
 
 ***TUIJS-Router is currently pre-release. Expect breaking changes.***
 
@@ -10,70 +10,100 @@ A simple and easy to use client-side router for JavaScript.
 <br>
 
 ## Getting Started
-The TUIJS-Router is flexible and can handle all routes, or if desired, it can be easily configured to direct unknown routes or any specified routes to the server.
-1. The easiest way to get started is to configure you server to respond to explicit server routes, then return your index.html for all other requests. ***Further configuration is recommended for a production app.***
-2. On the client side app import the 'createRouter' function from 'tuijs-router', then create a new instance.
+1. Install TUIJS-Router via NPM.
 
-3. On the client side use the set functions to apply your router initial router configuration to your router instance.
-    - **setRouteList** - Sets the route list Array. This array contains Objects which each define a single route. The structure for each object is path, enterFunction, exitFunction(optional).
-        - "path" - string - Defines the route path.
-        - "enterFunction" - Function - Will be executed when the route is navigated to. This is the core of where routed changes occur. Any desired validations should be at the beginning of this Function.
-        - "exitFunction" - Function - *OPTIONAL* - Will be executed when the route is navigated away from.
-     - **serverRouteList** - *OPTIONAL* - Sets the server route list Array. This array contains a list of strings that define routes that should be passed to the server without being processed by the client router.
-        - "path" - string - Defines the route path.
-        - "enterFunction" - Function - Will be executed when the route is navigated to. This is the core of where routed changes occur. Any desired validations should be at the beginning of this Function.
-        - "exitFunction" - Function - *OPTIONAL* - Will be executed when the route is navigated away from.
-    - **setRouteNotFound** - Sets the route not found options. This Object contains two options.
-        - "server" - Default = true - A boolean which tells the router where to send requests to do not match any defined client routes. If true, "404/Page Not Found" requests will be passed the server. If false they will be directed to the client side router. 
-        - "path" - Default = '/404' - A string that contains the "404/Page Not Found".
-    - **setRedirectList** - *OPTIONAL* - Sets any paths that should redirect. This Array is optional and only needs to be set if client router redirects are desired. This can be useful when you have a root path that is only structural (See JS code example below). The structure for each object is fromPath then toPath.
-        - "fromPath" - string - Defines the pathe to be redirected from.
-        - "toPath" - string - Defines the pathe to be redirected to.
+2. Once installed import 'createRouterInstance' and use the creator function to create a new instance.
 
-4. Start the router instance. This initiates the router eventListeners and the first route.
-5. If data needs to be passed between routes, use the **navigateTo** method and set the optional data parameter. on the resulting page you can use the **getData** method, on the same router instance, in order to collect the data.
-<br>
-<br>
-
-### Client example using JavaScript.
 ```js
-import { tuiRouter } from 'tuijs-router';
-import { renderPageHome, leavePageHome } from '/home.js';
-import { renderPageAbout } from '/about.js';
-import { renderPageContact } from '/contact.js';
-import { renderPageDocsIntro, renderPageDocsMore } from '/docs.js';
-import { renderPageUsers } from '/contact.js';
+import { createRouterInstance } from 'tuijs-router';
 
-const routerInstance = tuiRouter();
+const routerInstance = createRouterInstance();
+```
 
-routerInstance.setRouteList([
-    { path: '/', enterFunction: renderPageHome, exitFunction: leavePageHome },
-    { path: '/about', enterFunction: renderPageAbout },
-    { path: '/contact', enterFunction: renderPageContact },
-    { path: '/docs/intro', enterFunction: renderPageDocsIntro },
-    { path: '/docs/more', enterFunction: renderPageDocsMore },
-    { path: '/users/:page-name', enterFunction: () => {
-            const pageData = routerInstance.getState();
-            renderPageUsers(pageData);
-        }
+3. Once an instance has been created, routes can be added individually using the **addRoute** or all at once using the **setRouteList** method. Each route consists of a path, an enter function, and an optional exit function. This simple route object format keeps router extremely flexible and allows a developer to have complete control over the code that executes when navigating between routes.
+
+Example using **addRoute**:
+```js
+routerInstance.addRoute({
+    path: '/',
+    enterFunction: () => {document.body.innerText = 'Home Page'}
+});
+```
+
+Example using **setRouteList**:
+```js
+const routes = [
+    {
+        path: '/',
+        enterFunction: () => {document.body.innerText = 'Home Page'}
     },
-]);
-routerInstance.setServerRouteList([
-    '/server-only-route',
-]);
-routerInstance.setRouteNotFound({
-    server: true,
-    path: '/404'
-}); 
-routerInstance.setRedirectList([
+    {
+        path: '/about',
+        enterFunction: () => {document.body.innerText = 'About Page'},
+        exitFunction: () => {console.log('Leaving the About Page')}
+    }
+]
+```
+
+4. The **setRouteNotFound** method may be used to configure the router's behavior in the event that a route is called that was not defined in the **routeList** configuration. These can be redirected to the client side router or to the server if a true 404 response is desired. By default, all unknown routes are sent to the server with the path "/404".
+
+5. Client redirects may also be configured but are optional. These can be useful if you have a parent path that is not an actual page. Redirects can be added, deleted, or the entire list set at once. See the example below.
+
+Example using **addRedirect**:
+```js
+routerInstance.addRedirect({
+    fromPath: '/users',
+    toPath: '/users/profile'
+})
+```
+
+Example using **setRedirectList**:
+```js
+const redirectList = [
+    {
+        fromPath: '/users',
+        toPath: '/users/profile'
+    },
     {
         fromPath: '/docs',
-        toPath: '/docs/intro'
+        toPath: '/docs/introduction'
     }
-]);
+]
+routerInstance.setRedirectList();
+```
 
+6. If desired, server only routes may configured. These routes will bypass the client router and be sent directly to the server. Server routes may be added, deleted, or the entire list set at once.
+***It should be noted that TUIJS-Router does not affect fetch requests. As a result, many project likely do not need to utilize this configuration.***
+
+Example using **addServerRoute**:
+```js
+routerInstance.addServerRoute('/login');
+```
+
+Example using **setServerRouteList**:
+```js
+const serverRouteList = [
+    '/login',
+    '/logout'
+]
+routerInstance.setServerRouteList(serverRouteList);
+```
+
+7. Once the router configuration is ready, the router needs to be started using **startRouter** method.
+
+```js
 routerInstance.startRouter();
 ```
+
+<br>
+<br>
+
+
+## Dynamic Routes
+TUIJS-Router supports dynamic routing. ADD MOTE DETAIL HERE
+
+## State Data
+TUIJS-Router supports the ability to pass a state data Object from one page to another. State data is passed using the optional **data** parameter in the **navigateTo** method. All previous state data is cleared when the **navigateTo** method is called. State data may also be manually manipulated using the **setState**, **getState**, and **clearState** methods if needed. 
 
 ## Notes:
 - ***IT IS NOT RECOMMENDED TO USE DYNAMIC ROUTES AT THE ROOT. THIS CAN BREAK ROUTING, CREATE ROUTING LOOPS, OR CAUSE SEO ISSUES.***

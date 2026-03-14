@@ -9,7 +9,6 @@ import type {
     StateData
 } from './models.js';
 
-import { checkIsArray, checkIsObject } from 'tuijs-util';
 import { eventInstance, routerConfig, stateData } from './globals.js';
 import { handleClickEvent } from './handlers.js';
 import { navigateTo } from "./navigate.js";
