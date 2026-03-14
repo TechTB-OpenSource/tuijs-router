@@ -69,6 +69,7 @@ export async function navigateTo(targetRoute, data = null, visitedPaths = new Se
         return;
     }
     // If no route is found
+    // TO DO - Check this again after testing, may be redundant.
     if (routeNotFound['server'] === true) {
         window.location.href = routeNotFound['path']; // Send request to server if route isn't found and routeNotFound 
         return;

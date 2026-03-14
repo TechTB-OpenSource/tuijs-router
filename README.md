@@ -1,6 +1,8 @@
 # TUIJS-Router
 ***Last Updated 03/14/2026***
 
+TO DO - Finish organizing parameters and methods
+
 ## Description
 A simple and easy to use client-side router for JavaScript. TUIJS-Router is flexible and can be used with vanilla Javascript or with most front end frameworks. TUIJS-Router also works great with TypeScript project.
 
