@@ -1,4 +1,4 @@
-import { navigateTo, navigateToNewTab, navigateToAnchorTag } from "./navigate.js";
+import { navigateTo, navigateToNewTab, navigateToAnchorTag } from "./methods/navigate.js";
 /**
  * Handles document click events to determine if the default action should be prevented for client-side routing.
  * If so, a navigation function is called accordingly.

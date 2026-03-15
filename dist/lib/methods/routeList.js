@@ -1,10 +1,8 @@
-import type { Route, RouteList } from '../models.js';
 import { routerConfig } from '../globals.js';
-
 /**
  * Sets the routeList array in the routerConfig Object
  */
-export function setRouteList(newRouteList: RouteList): void {
+export function setRouteList(newRouteList) {
     for (let i = 0; i < newRouteList.length; i++) {
         const { path, enterFunction, exitFunction, ...rest } = newRouteList[i];
         if (Object.keys(rest).length > 0) {
@@ -22,12 +20,11 @@ export function setRouteList(newRouteList: RouteList): void {
     }
     routerConfig['routeList'] = newRouteList;
 }
-
 /**
  * Creates a route Object within the routeList Array
  * If a route with the same path already exists, it is overwritten with the new route Object.
  */
-export function addRoute(newRoute: Route): void {
+export function addRoute(newRoute) {
     const index = routerConfig.routeList.findIndex(route => route['path'] === newRoute.path);
     if (index !== -1) {
         routerConfig.routeList[index] = newRoute;
@@ -35,21 +32,20 @@ export function addRoute(newRoute: Route): void {
     }
     routerConfig['routeList'].push(newRoute);
 }
-
 /**
  * Deletes all matching route Objects within the routeList Array based on input.
  */
-export function deleteRoute(path: string): void {
+export function deleteRoute(path) {
     for (let i = routerConfig['routeList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
         if (routerConfig['routeList'][i]['path'] === path) {
             routerConfig['routeList'].splice(i, 1);
         }
     }
 }
-
 /**
  * Returns the RouteList array.
  */
-export function getRouteList(): RouteList {
+export function getRouteList() {
     return routerConfig['routeList'];
 }
+//# sourceMappingURL=routeList.js.map

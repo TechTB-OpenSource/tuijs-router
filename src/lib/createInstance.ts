@@ -1,37 +1,52 @@
-import { createEventInstance } from 'tuijs-event';
+import * as CONTROL from './methods/control.js';
 import * as NAVIGATE from './methods/navigate.js';
+import * as REDIRECT_LIST from './methods/redirectList.js';
+import * as ROUTE_LIST from './methods/routeList.js';
+import * as SERVER_ROUTE_LIST from './methods/serverRouteList.js';
+import * as ROUTE_NOT_FOUND from './methods/routeNotFound.js';
+import * as STATE from './methods/state.js';
 
 
 export function createRouterInstance() {
     const {
         startRouter,
         stopRouter,
-        setRouteList,
-        addRoute,
-        deleteRoute,
-        setServerRouteList,
-        addServerRoute,
-        deleteServerRoute,
-        replaceServerRoute,
-        setRouteNotFound,
-        setRedirectList,
-        addRedirect,
-        deleteRedirect,
-        getRouterConfig,
-        getRouteList,
-        getServerRouteList,
-        getRouteNotFound,
-        getRedirectList,
-        setState,
-        getState,
-        clearState
-    } = METHODS;
+        getRouterConfig
+    } = CONTROL;
     const {
         navigateTo,
         navigateToNewTab,
         navigateToAnchorTag,
         navigateBack
     } = NAVIGATE;
+    const {
+        setRedirectList,
+        addRedirect,
+        deleteRedirect,
+        getRedirectList
+    } = REDIRECT_LIST;
+    const {
+        setRouteList,
+        addRoute,
+        deleteRoute,
+        getRouteList
+    } = ROUTE_LIST;
+    const {
+        setServerRouteList,
+        addServerRoute,
+        deleteServerRoute,
+        replaceServerRoute,
+        getServerRouteList
+    } = SERVER_ROUTE_LIST;
+    const {
+        setRouteNotFound,
+        getRouteNotFound
+    } = ROUTE_NOT_FOUND;
+    const {
+        setState,
+        getState,
+        clearState
+    } = STATE;
     return {
         startRouter,
         stopRouter,
