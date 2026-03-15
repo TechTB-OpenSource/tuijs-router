@@ -93,8 +93,6 @@ export function navigateToNewTab(route) {
 /**
  * Handles anchor tag routes
  * Scrolls to element into view smoothly
- * @param {string} anchor - URL
- * @returns {void}
  */
 export function navigateToAnchorTag(anchor) {
     let element = document.getElementById(anchor.slice(1));

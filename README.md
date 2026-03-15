@@ -103,25 +103,28 @@ routerInstance.startRouter();
 
 
 ## Dynamic Routes
-TUIJS-Router supports dynamic routing. ADD MOTE DETAIL HERE
+TUIJS-Router supports dynamic routing. to create a dynamic route, simple add a route with a path starting with ":".
+***IT IS NOT RECOMMENDED TO USE DYNAMIC ROUTES AT THE ROOT. THIS CAN BREAK ROUTING, CREATE ROUTING LOOPS, OR CAUSE SEO ISSUES.***
 
 ## State Data
-TUIJS-Router supports the ability to pass a state data Object from one page to another. State data is passed using the optional **data** parameter in the **navigateTo** method. All previous state data is cleared when the **navigateTo** method is called. State data may also be manually manipulated using the **setState**, **getState**, and **clearState** methods if needed. 
+TUIJS-Router supports the ability to pass a state data Object from one page to another. State data is passed using the optional **data** parameter in the **navigateTo** method. All previous state data is cleared when the **navigateTo** method is called. State data may also be manually manipulated using the **setState**, **getState**, and **clearState** methods if needed.
+
+## New Tabs
+To open a new tab, use the **navigateToNewTab** method. 
+TO DO - ADD MORE DETAIL HERE.
 
 ## Notes:
-- ***IT IS NOT RECOMMENDED TO USE DYNAMIC ROUTES AT THE ROOT. THIS CAN BREAK ROUTING, CREATE ROUTING LOOPS, OR CAUSE SEO ISSUES.***
-- Link click handling.
-    - If the link starts with one of the following prefix's, client side routing will be skipped.
-        - 'http://'
-        - 'https://'
-        - 'ftp://'
-        - 'file://'
-        - 'ws://'
-        - 'wss://'
-        - 'tel:'
-        - 'mailto:'
-    - If the link prefix is '#' client-side, the 'NavigateToAnchorTag' method is used to scroll to the element location.
-    - If the link target is set to '_blank', client side routing will be skipped.
+- If an A tag used and the href starts with one of the following prefix's, client side routing will be skipped.
+    - 'http://'
+    - 'https://'
+    - 'ftp://'
+    - 'file://'
+    - 'ws://'
+    - 'wss://'
+    - 'tel:'
+    - 'mailto:'
+- If an A tag is used and the href starts with **#**, the **NavigateToAnchorTag** method is used to scroll to the element location on the current page.
+- If and A tag is used and the target is set to **_blank**, client side routing will be skipped.
 <br>
 <br>        
 

@@ -9,8 +9,6 @@ export declare function navigateToNewTab(route: string): void;
 /**
  * Handles anchor tag routes
  * Scrolls to element into view smoothly
- * @param {string} anchor - URL
- * @returns {void}
  */
 export declare function navigateToAnchorTag(anchor: string): void;
 /**
