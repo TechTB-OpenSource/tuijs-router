@@ -48,6 +48,9 @@ const routes = [
 ```
 
 4. The **setRouteNotFound** method may be used to configure the router's behavior in the event that a route is called that was not defined in the **routeList** configuration. These can be redirected to the client side router or to the server if a true 404 response is desired. By default, all unknown routes are sent to the server with the path "/404".
+
+<br>
+
 ***It should be noted that if the server has a basic SPA configuration, and serves "index.html" for all requests, sending unknown routes to the server will cause a routing loop. To avoid this, ensure the server is configured to correctly handle the configured route not found path. This includes Vite. To ensure development environments handle the route not found path, make sure it is included in the Vite configuration file.***
 
 5. Client redirects may also be configured but are optional. These can be useful if you have a parent path that is not an actual page. Redirects can be added, deleted, or the entire list set at once. See the example below.
@@ -76,6 +79,9 @@ routerInstance.setRedirectList();
 ```
 
 6. If desired, server only routes may configured. These routes will bypass the client router and be sent directly to the server. Server routes may be added, deleted, or the entire list set at once.
+
+<br>
+
 ***It should be noted that TUIJS-Router does not affect fetch requests. As a result, many project likely do not need to utilize this configuration.***
 
 Example using **addServerRoute**:
