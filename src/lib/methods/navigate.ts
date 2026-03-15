@@ -4,9 +4,9 @@ import type {
     RedirectList,
     DiscoverClientRouteResult,
     DiscoveredServerRouteResult
-} from './models.js';
-import { routerConfig, activeRoute, stateData } from './globals.js';
-import { findClientRoute, findServerRoute, sanitizePath } from './utils.js';
+} from '../models.js';
+import { routerConfig, activeRoute, stateData } from '../globals.js';
+import { findClientRoute, findServerRoute, sanitizePath } from '../utils.js';
 
 /**
  * Handles the routing logic. This is the core of the router.

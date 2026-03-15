@@ -49,7 +49,7 @@ const routes = [
 
 4. The **setRouteNotFound** method may be used to configure the router's behavior in the event that a route is called that was not defined in the **routeList** configuration. These can be redirected to the client side router or to the server if a true 404 response is desired. By default, all unknown routes are sent to the server with the path "/404".
 
-&nbsp;&nbsp;&nbsp;&nbsp;***It should be noted that if the server has a basic SPA configuration, and serves "index.html" for all requests, sending unknown routes to the server will cause a routing loop. To avoid this, ensure the server is configured to correctly handle the configured route not found path. This includes Vite. To ensure development environments handle the route not found path, make sure it is included in the Vite configuration file.***
+***It should be noted that if the server has a basic SPA configuration, and serves "index.html" for all requests, sending unknown routes to the server will cause a routing loop. To avoid this, ensure the server is configured to correctly handle the configured route not found path. This includes Vite. To ensure development environments handle the route not found path, make sure it is included in the Vite configuration file.***
 
 5. Client redirects may also be configured but are optional. These can be useful if you have a parent path that is not an actual page. Redirects can be added, deleted, or the entire list set at once. See the example below.
 
@@ -106,6 +106,7 @@ routerInstance.startRouter();
 
 ## Dynamic Routes
 TUIJS-Router supports dynamic routing. to create a dynamic route, simple add a route with a path starting with ":".
+
 ***IT IS NOT RECOMMENDED TO USE DYNAMIC ROUTES AT THE ROOT. THIS CAN BREAK ROUTING, CREATE ROUTING LOOPS, OR CAUSE SEO ISSUES.***
 
 ## State Data

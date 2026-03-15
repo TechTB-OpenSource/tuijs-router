@@ -1,6 +1,5 @@
 import { createEventInstance } from 'tuijs-event';
-import * as METHODS from './methods.js';
-import * as NAVIGATE from './navigate.js';
+import * as NAVIGATE from './methods/navigate.js';
 
 
 export function createRouterInstance() {
@@ -36,25 +35,31 @@ export function createRouterInstance() {
     return {
         startRouter,
         stopRouter,
+        getRouterConfig,
+
         setRouteList,
         addRoute,
         deleteRoute,
+        getRouteList,
+
         setServerRouteList,
         addServerRoute,
         deleteServerRoute,
         replaceServerRoute,
+        getServerRouteList,
+
         setRouteNotFound,
+        getRouteNotFound,
+
         setRedirectList,
         addRedirect,
         deleteRedirect,
-        getRouterConfig,
-        getRouteList,
-        getServerRouteList,
-        getRouteNotFound,
         getRedirectList,
+
         setState,
         getState,
         clearState,
+
         navigateTo,
         navigateToNewTab,
         navigateToAnchorTag,

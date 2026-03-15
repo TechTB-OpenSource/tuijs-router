@@ -1,4 +1,4 @@
-import { navigateTo, navigateToNewTab, navigateToAnchorTag } from "./navigate.js";
+import { navigateTo, navigateToNewTab, navigateToAnchorTag } from "./methods/navigate.js";
 
 
 /**
