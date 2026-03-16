@@ -134,6 +134,7 @@ TO DO - ADD MORE DETAIL HERE.
 ## ROUTER CONTROL METHODS
 ### startRouter
 Attaches window and document event listeners to start the router.
+
 | Parameters |
 |------------|
 | None       |
@@ -141,6 +142,7 @@ Attaches window and document event listeners to start the router.
 
 ### stopRouter
 Removes all event listeners to stop the router.
+
 | Parameters |
 |------------|
 | None       |
@@ -148,6 +150,7 @@ Removes all event listeners to stop the router.
 
 ### getRouterConfig
 Returns the active **routerConfig** object.
+
 | Parameters |
 |------------|
 | None       |
@@ -163,6 +166,7 @@ Returns the active **routerConfig** object.
  * If the target route is not found in the client route list but is found in the server route list, it will send a request to the server.
  * If the target route is not found in either the client or server route list, it will navigate to the route not found path.
  * To prevent infinite loops, if a route is visited more than once during a single navigation attempt, the router will log an error and navigate to the root path.
+
 | Parameters   | Type     | Description                                                               |
 |--------------|----------|---------------------------------------------------------------------------|
 | targetRoute  | string   | The route to be navigated to                                              |
@@ -171,7 +175,8 @@ Returns the active **routerConfig** object.
 <br>
 
 ### navigateToNewTab
-Allows the client side router to open a page in a new tab
+Allows the client side router to open a page in a new tab.
+
 | Parameters   | Type     | Description                  |
 |--------------|----------|------------------------------|
 | route        | string   | The route to be navigated to |
@@ -179,6 +184,7 @@ Allows the client side router to open a page in a new tab
 
 ### navigateToAnchorTag
 Handles anchor tag routes. Scrolls element into view smoothly.
+
 | Parameters   | Type     | Description                          |
 |--------------|----------|--------------------------------------|
 | anchor       | string   | The element to be scrolled into view |
@@ -186,6 +192,7 @@ Handles anchor tag routes. Scrolls element into view smoothly.
 
 ### NavigateBack
 Navigates back to the previous page or to the root if no referrer exists. Uses the browser's history API and delegates to **navigateTo** to maintain router state.
+
 | Parameters |
 |------------|
 | None       |
@@ -195,6 +202,7 @@ Navigates back to the previous page or to the root if no referrer exists. Uses t
 ## ROUTE LIST METHODS
 ### setRouteList
 Sets the entire **routeList** array in the routerConfig Object, overwriting any existing **routeList**.
+
 | Parameters   | Type         | Description               |
 |--------------|--------------|---------------------------|
 | newRouteList | RouteList    | An array of Route Objects |
@@ -202,6 +210,7 @@ Sets the entire **routeList** array in the routerConfig Object, overwriting any 
 
 ### addRoute
 Creates a route Object within the **routeList** Array. If a route with the same path already exists, it is overwritten with the new route Object.
+
 | Parameters   | Type        | Description               |
 |--------------|-------------|---------------------------|
 | newRoute     | Route       | The route to be added     |
@@ -209,6 +218,7 @@ Creates a route Object within the **routeList** Array. If a route with the same 
 
 ### deleteRoute
 Deletes all matching route Objects within the **routeList** Array.
+
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
@@ -216,6 +226,7 @@ Deletes all matching route Objects within the **routeList** Array.
 
 ### getRouteList
 Returns the **RouteList** array.
+
 | Parameters |
 |------------|
 | None       |
@@ -225,6 +236,7 @@ Returns the **RouteList** array.
 ## SERVER ROUTE LIST METHODS
 ### setServerRouteList
 Sets the **routeListServer** array in the **routerConfig** Object.
+
 | Parameters         | Type             | Description                                                        |
 |--------------------|------------------|--------------------------------------------------------------------|
 | serverRouteList    | ServerRouteList  | List of server routes to be added to router instance configuration |
@@ -232,6 +244,7 @@ Sets the **routeListServer** array in the **routerConfig** Object.
 
 - ### addServerRoute
 Creates a route Object within the **serverRouteList** Array.
+
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
@@ -239,6 +252,7 @@ Creates a route Object within the **serverRouteList** Array.
 
 - ### deleteServerRoute
 Deletes all matching route Objects within the **serverRouteList** Array based on input.
+
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
@@ -246,6 +260,7 @@ Deletes all matching route Objects within the **serverRouteList** Array based on
 
 ### replaceServerRoute
 Replaces an existing route Object within the **serverRouteLis**t Array.
+
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
 | oldPath      | string   | The old route/path to be replaced         |
@@ -254,6 +269,7 @@ Replaces an existing route Object within the **serverRouteLis**t Array.
 
 ### getServerRouteList
 Returns the **ServerRouteList** array.
+
 | Parameters |
 |------------|
 | None       |
@@ -263,6 +279,7 @@ Returns the **ServerRouteList** array.
 ## ROUTE NOT FOUND METHODS
 ### setRouteNotFound
 Sets the **routeNotFound** Object in the **routerConfig** Object.
+
 | Parameters   | Type                  | Description                        |
 |--------------|-----------------------|------------------------------------|
 | routeNotFound      | RouteNotFound   | The route not found object         |
@@ -270,6 +287,7 @@ Sets the **routeNotFound** Object in the **routerConfig** Object.
 
 ### getRouteNotFound
 Returns the **RouteNotFound** Object.
+
 | Parameters |
 |------------|
 | None       |
@@ -279,6 +297,7 @@ Returns the **RouteNotFound** Object.
 ## REDIRECT METHODS
 ### setRedirectList
 Sets the **redirectList** Array in the **routerConfig** Object.
+
 | Parameters   | Type            | Description                  |
 |--------------|-----------------|------------------------------|
 | redirectList | RedirectList    | An array of redirect objects |
@@ -286,12 +305,14 @@ Sets the **redirectList** Array in the **routerConfig** Object.
 
 ### addRedirect
 Creates a redirect Object within the redirectList Array. If a redirect with the same fromPath already exists, it is overwritten with the new redirect Object.
+
 | Parameters   | Type     | Description                                             |
 |--------------|----------|---------------------------------------------------------|
 | newRedirect     | Redirect   | The redirect object to be added to the routeConfig |
 
 ### deleteRedirect
 Deletes all matching redirect Objects within the redirectList Array based on input.
+
 | Parameters   | Type     | Description                       |
 |--------------|----------|-----------------------------------|
 | fromPath     | string   | The redirect object to be deleted |
@@ -299,6 +320,7 @@ Deletes all matching redirect Objects within the redirectList Array based on inp
 
 ### getRedirectList
 Returns the **RedirectList** Array.
+
 | Parameters |
 |------------|
 | None       |
@@ -308,6 +330,7 @@ Returns the **RedirectList** Array.
 ## STATE METHODS
 ### setState
 Sets the stateData Object.
+
 | Parameters   | Type     | Description                                                               |
 |--------------|----------|---------------------------------------------------------------------------|
 | data         | Object   | The state data to be set (Global to the router)                           |
@@ -315,6 +338,7 @@ Sets the stateData Object.
 
 ### getState
 Returns the stateData Object.
+
 | Parameters |
 |------------|
 | None       |
@@ -322,6 +346,7 @@ Returns the stateData Object.
 
 ### clearState
 Clears the stateData Object.
+
 | Parameters |
 |------------|
 | None       |
