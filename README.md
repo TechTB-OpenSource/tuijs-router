@@ -12,7 +12,7 @@ A simple and easy to use client-side router for JavaScript. TUIJS-Router is flex
 ## Getting Started
 1. Install TUIJS-Router via NPM.
 
-2. Once installed import 'createRouterInstance' and use the creator function to create a new instance.
+2. Once installed import **createRouterInstance** and use the creator function to create a new instance.
 
 ```js
 import { createRouterInstance } from 'tuijs-router';
