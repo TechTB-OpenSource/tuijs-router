@@ -201,7 +201,7 @@ Navigates back to the previous page or to the root if no referrer exists. Uses t
 
 ## ROUTE LIST METHODS
 ### setRouteList
-Sets the entire **routeList** array in the routerConfig Object, overwriting any existing **routeList**.
+Sets the entire **routeList** array in the **routerConfig** Object, overwriting any existing **routeList**.
 
 | Parameters   | Type         | Description               |
 |--------------|--------------|---------------------------|
@@ -209,7 +209,7 @@ Sets the entire **routeList** array in the routerConfig Object, overwriting any 
 <br>
 
 ### addRoute
-Creates a route Object within the **routeList** Array. If a route with the same path already exists, it is overwritten with the new route Object.
+Creates a route Object within the **routeList** Array. If a route with the same path already exists, it is overwritten with the new **route** Object.
 
 | Parameters   | Type        | Description               |
 |--------------|-------------|---------------------------|
@@ -243,7 +243,7 @@ Sets the **routeListServer** array in the **routerConfig** Object.
 <br>
 
 - ### addServerRoute
-Creates a route Object within the **serverRouteList** Array.
+Creates a **route** Object within the **serverRouteList** Array.
 
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
@@ -251,7 +251,7 @@ Creates a route Object within the **serverRouteList** Array.
 <br>
 
 - ### deleteServerRoute
-Deletes all matching route Objects within the **serverRouteList** Array based on input.
+Deletes all matching **route** Objects within the **serverRouteList** Array based on input.
 
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
@@ -259,7 +259,7 @@ Deletes all matching route Objects within the **serverRouteList** Array based on
 <br>
 
 ### replaceServerRoute
-Replaces an existing route Object within the **serverRouteLis**t Array.
+Replaces an existing **route** Object within the **serverRouteList** Array.
 
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
@@ -304,14 +304,14 @@ Sets the **redirectList** Array in the **routerConfig** Object.
 <br>
 
 ### addRedirect
-Creates a redirect Object within the redirectList Array. If a redirect with the same fromPath already exists, it is overwritten with the new redirect Object.
+Creates a **redirect** Object within the **redirectList** Array. If a **redirect** with the same fromPath already exists, it is overwritten with the new **redirect** Object.
 
 | Parameters   | Type     | Description                                             |
 |--------------|----------|---------------------------------------------------------|
 | newRedirect     | Redirect   | The redirect object to be added to the routeConfig |
 
 ### deleteRedirect
-Deletes all matching redirect Objects within the redirectList Array based on input.
+Deletes all matching **redirect** Objects within the **redirectList** Array based on input.
 
 | Parameters   | Type     | Description                       |
 |--------------|----------|-----------------------------------|
@@ -329,7 +329,7 @@ Returns the **RedirectList** Array.
 
 ## STATE METHODS
 ### setState
-Sets the stateData Object.
+Sets the **stateData** Object.
 
 | Parameters   | Type     | Description                                                               |
 |--------------|----------|---------------------------------------------------------------------------|
@@ -337,7 +337,7 @@ Sets the stateData Object.
 <br>
 
 ### getState
-Returns the stateData Object.
+Returns the **stateData** Object.
 
 | Parameters |
 |------------|
@@ -345,7 +345,7 @@ Returns the stateData Object.
 <br>
 
 ### clearState
-Clears the stateData Object.
+Clears the **stateData** Object.
 
 | Parameters |
 |------------|
