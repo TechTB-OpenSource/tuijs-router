@@ -4,7 +4,7 @@ import { handleClickEvent } from '../handlers.js';
 import { navigateTo } from "../methods/navigate.js";
 
 /**
- * Attaches window and document event listeners to start routing.
+ * Attaches window and document event listeners to start the router.
  */
 export function startRouter(): void {
     eventInstance.addTrackedEvent(document, 'click', handleClickEvent); // Click Events
@@ -20,7 +20,7 @@ export function stopRouter(): void {
 }
 
 /**
- * Returns an routerConfig Object.
+ * Returns the active routerConfig object.
  */
 export function getRouterConfig(): RouterConfig {
     return routerConfig;

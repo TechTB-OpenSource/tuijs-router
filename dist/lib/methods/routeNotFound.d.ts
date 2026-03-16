@@ -1,6 +1,6 @@
 import type { RouteNotFound } from '../models.js';
 /**
- * Sets the routeNotFound Object in the routerConfig Object
+ * Sets the routeNotFound Object in the routerConfig Object.
  */
 export declare function setRouteNotFound(routeNotFound: RouteNotFound): void;
 /**

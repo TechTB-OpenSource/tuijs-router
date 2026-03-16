@@ -1,7 +1,7 @@
 import * as CONTROL from './methods/control.js';
 import * as NAVIGATE from './methods/navigate.js';
-import * as REDIRECT_LIST from './methods/redirectList.js';
 import * as ROUTE_LIST from './methods/routeList.js';
+import * as REDIRECT_LIST from './methods/redirectList.js';
 import * as SERVER_ROUTE_LIST from './methods/serverRouteList.js';
 import * as ROUTE_NOT_FOUND from './methods/routeNotFound.js';
 import * as STATE from './methods/state.js';
@@ -20,17 +20,17 @@ export function createRouterInstance() {
         navigateBack
     } = NAVIGATE;
     const {
-        setRedirectList,
-        addRedirect,
-        deleteRedirect,
-        getRedirectList
-    } = REDIRECT_LIST;
-    const {
         setRouteList,
         addRoute,
         deleteRoute,
         getRouteList
     } = ROUTE_LIST;
+    const {
+        setRedirectList,
+        addRedirect,
+        deleteRedirect,
+        getRedirectList
+    } = REDIRECT_LIST;
     const {
         setServerRouteList,
         addServerRoute,

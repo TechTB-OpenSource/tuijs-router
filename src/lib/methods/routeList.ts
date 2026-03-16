@@ -2,7 +2,7 @@ import type { Route, RouteList } from '../models.js';
 import { routerConfig } from '../globals.js';
 
 /**
- * Sets the routeList array in the routerConfig Object
+ * Sets the entire routeList array in the routerConfig Object, overwriting any existing routeList.
  */
 export function setRouteList(newRouteList: RouteList): void {
     for (let i = 0; i < newRouteList.length; i++) {
@@ -24,7 +24,7 @@ export function setRouteList(newRouteList: RouteList): void {
 }
 
 /**
- * Creates a route Object within the routeList Array
+ * Creates a route Object within the routeList Array.
  * If a route with the same path already exists, it is overwritten with the new route Object.
  */
 export function addRoute(newRoute: Route): void {
@@ -37,7 +37,7 @@ export function addRoute(newRoute: Route): void {
 }
 
 /**
- * Deletes all matching route Objects within the routeList Array based on input.
+ * Deletes all matching route Objects within the routeList Array.
  */
 export function deleteRoute(path: string): void {
     for (let i = routerConfig['routeList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop

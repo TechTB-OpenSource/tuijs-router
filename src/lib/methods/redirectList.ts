@@ -2,14 +2,14 @@ import type { Redirect, RedirectList } from '../models.js';
 import { routerConfig } from '../globals.js';
 
 /**
- * Sets the redirectList Array in the routerConfig Object
+ * Sets the redirectList Array in the routerConfig Object.
  */
 export function setRedirectList(redirectList: RedirectList): void {
     routerConfig['redirectList'] = redirectList;
 }
 
 /**
- * Creates a redirect Object within the redirectList Array
+ * Creates a redirect Object within the redirectList Array.
  * If a redirect with the same fromPath already exists, it is overwritten with the new redirect Object.
  */
 export function addRedirect(newRedirect: Redirect): void {

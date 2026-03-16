@@ -1,8 +1,6 @@
 # TUIJS-Router
 ***Last Updated 03/14/2026***
 
-TO DO - Finish organizing parameters and methods
-
 ## Description
 A simple and easy to use client-side router for JavaScript. TUIJS-Router is flexible and can be used with vanilla Javascript or with most front end frameworks. TUIJS-Router also works great with TypeScript project.
 
@@ -133,176 +131,199 @@ TO DO - ADD MORE DETAIL HERE.
 
 ## Below are all of the router methods.
 
+## ROUTER CONTROL METHODS
 ### startRouter
-
+Attaches window and document event listeners to start the router.
 | Parameters |
 |------------|
 | None       |
 <br>
 
 ### stopRouter
-
+Removes all event listeners to stop the router.
 | Parameters |
 |------------|
 | None       |
 <br>
 
-### setRouteList
+### getRouterConfig
+Returns the active **routerConfig** object.
+| Parameters |
+|------------|
+| None       |
+<br>
+<br>
 
-| Parameters   | Type     | Description               |
-|--------------|----------|---------------------------|
-| newRouteList | Array    | An array of route Objects |
+## ROUTER NAVIGATION METHODS
+### navigateTo
+ Navigates to the target route.
+ * If the target route is the same as the current route, it will re-run the enter function and update state.
+ * If the target route is different from the current route, it will create a new entry in the browser's history stack and run the enter function.
+ * If the target route matches a redirect, it will navigate to the redirect's toPath.
+ * If the target route is not found in the client route list but is found in the server route list, it will send a request to the server.
+ * If the target route is not found in either the client or server route list, it will navigate to the route not found path.
+ * To prevent infinite loops, if a route is visited more than once during a single navigation attempt, the router will log an error and navigate to the root path.
+| Parameters   | Type     | Description                                                               |
+|--------------|----------|---------------------------------------------------------------------------|
+| targetRoute  | string   | The route to be navigated to                                              |
+| data         | Object   | State data to be passed to the destination route (optional)               |
+| visitedPaths | Set      | A list of visited paths designed to prevent infinite route loops (20 Max) |
+<br>
+
+### navigateToNewTab
+Allows the client side router to open a page in a new tab
+| Parameters   | Type     | Description                  |
+|--------------|----------|------------------------------|
+| route        | string   | The route to be navigated to |
+<br>
+
+### navigateToAnchorTag
+Handles anchor tag routes. Scrolls element into view smoothly.
+| Parameters   | Type     | Description                          |
+|--------------|----------|--------------------------------------|
+| anchor       | string   | The element to be scrolled into view |
+<br>
+
+### NavigateBack
+Navigates back to the previous page or to the root if no referrer exists. Uses the browser's history API and delegates to **navigateTo** to maintain router state.
+| Parameters |
+|------------|
+| None       |
+<br>
+<br>
+
+## ROUTE LIST METHODS
+### setRouteList
+Sets the entire **routeList** array in the routerConfig Object, overwriting any existing **routeList**.
+| Parameters   | Type         | Description               |
+|--------------|--------------|---------------------------|
+| newRouteList | RouteList    | An array of Route Objects |
 <br>
 
 ### addRoute
-
-| Parameters   | Type     | Description               |
-|--------------|----------|---------------------------|
-| path         | string   | The route to be added     |
+Creates a route Object within the **routeList** Array. If a route with the same path already exists, it is overwritten with the new route Object.
+| Parameters   | Type        | Description               |
+|--------------|-------------|---------------------------|
+| newRoute     | Route       | The route to be added     |
 <br>
 
 ### deleteRoute
-
+Deletes all matching route Objects within the **routeList** Array.
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
 <br>
 
-### replaceRoute
-
-| Parameters       | Type             | Description                                                              |
-|------------------|------------------|--------------------------------------------------------------------------|
-| path             | string           | The route to be added                                                    |
-| newEnterFunction | Function         | The function that executes when the route is triggered                   |
-| newExitFunction  | Function || null | The function that executes when the current route is navigated away from |
+### getRouteList
+Returns the **RouteList** array.
+| Parameters |
+|------------|
+| None       |
+<br>
 <br>
 
+## SERVER ROUTE LIST METHODS
 ### setServerRouteList
-
+Sets the **routeListServer** array in the **routerConfig** Object.
 | Parameters         | Type             | Description                                                        |
 |--------------------|------------------|--------------------------------------------------------------------|
-| newServerRouteList | Array            | List of server routes to be added to router instance configuration |
+| serverRouteList    | ServerRouteList  | List of server routes to be added to router instance configuration |
 <br>
 
 - ### addServerRoute
-
+Creates a route Object within the **serverRouteList** Array.
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
 <br>
 
 - ### deleteServerRoute
-
+Deletes all matching route Objects within the **serverRouteList** Array based on input.
 | Parameters   | Type     | Description               |
 |--------------|----------|---------------------------|
 | path         | string   | The route to be added     |
 <br>
 
 ### replaceServerRoute
-
+Replaces an existing route Object within the **serverRouteLis**t Array.
 | Parameters   | Type     | Description                               |
 |--------------|----------|-------------------------------------------|
 | oldPath      | string   | The old route/path to be replaced         |
 | newPath      | string   | The new route/path to replace the old one |
 <br>
 
+### getServerRouteList
+Returns the **ServerRouteList** array.
+| Parameters |
+|------------|
+| None       |
+<br>
+<br>
+
+## ROUTE NOT FOUND METHODS
 ### setRouteNotFound
-
-| Parameters   | Type     | Description                        |
-|--------------|----------|------------------------------------|
-| options      | Object   | The route not found object options |
-<br>
-
-### setRedirectList
-
-| Parameters   | Type     | Description                  |
-|--------------|----------|------------------------------|
-| redirectList | Array    | An array of redirect objects |
-<br>
-
-### addRedirect
-
-| Parameters   | Type     | Description                               |
-|--------------|----------|-------------------------------------------|
-| fromPath     | string   | The path that triggers the redirect       |
-| toPath       | string   | The new route/path to redirect to         |
-<br>
-
-### deleteRedirect
-
-| Parameters   | Type     | Description                               |
-|--------------|----------|-------------------------------------------|
-| fromPath     | string   | The redirect object to be deleted         |
-<br>
-
-### getRouterConfig
-
-| Parameters |
-|------------|
-| None       |
-<br>
-
-### getRouteList
-
-| Parameters |
-|------------|
-| None       |
+Sets the **routeNotFound** Object in the **routerConfig** Object.
+| Parameters   | Type                  | Description                        |
+|--------------|-----------------------|------------------------------------|
+| routeNotFound      | RouteNotFound   | The route not found object         |
 <br>
 
 ### getRouteNotFound
-
+Returns the **RouteNotFound** Object.
 | Parameters |
 |------------|
 | None       |
+<br>
+<br>
+
+## REDIRECT METHODS
+### setRedirectList
+Sets the **redirectList** Array in the **routerConfig** Object.
+| Parameters   | Type            | Description                  |
+|--------------|-----------------|------------------------------|
+| redirectList | RedirectList    | An array of redirect objects |
+<br>
+
+### addRedirect
+Creates a redirect Object within the redirectList Array. If a redirect with the same fromPath already exists, it is overwritten with the new redirect Object.
+| Parameters   | Type     | Description                                             |
+|--------------|----------|---------------------------------------------------------|
+| newRedirect     | Redirect   | The redirect object to be added to the routeConfig |
+
+### deleteRedirect
+Deletes all matching redirect Objects within the redirectList Array based on input.
+| Parameters   | Type     | Description                       |
+|--------------|----------|-----------------------------------|
+| fromPath     | string   | The redirect object to be deleted |
 <br>
 
 ### getRedirectList
-
+Returns the **RedirectList** Array.
 | Parameters |
 |------------|
 | None       |
 <br>
+<br>
 
+## STATE METHODS
 ### setState
-
+Sets the stateData Object.
 | Parameters   | Type     | Description                                                               |
 |--------------|----------|---------------------------------------------------------------------------|
-| targetRoute  | Object   | The state data to be set (Global to the router)                           |
+| data         | Object   | The state data to be set (Global to the router)                           |
 <br>
 
 ### getState
-
+Returns the stateData Object.
 | Parameters |
 |------------|
 | None       |
 <br>
 
 ### clearState
-
+Clears the stateData Object.
 | Parameters |
 |------------|
 | None       |
 <br>
 
-### navigateTo
-
-| Parameters   | Type     | Description                                                               |
-|--------------|----------|---------------------------------------------------------------------------|
-| targetRoute  | string   | The route/path to be navigated to                                         |
-| data         | Object   | State data to be passed to the destination route (optional)               |
-| visitedPaths | Set      | A list of visited paths designed to prevent infinite route loops (20 Max) |
-<br>
-
-### NavigateToAnchorTag
-
-| Parameters   | Type     | Description                 |
-|--------------|----------|-----------------------------|
-| anchor       | string   | The hash to be navigated to |
-<br>
-
-### NavigateBack
-
-| Parameters |
-|------------|
-| None       |
-<br>

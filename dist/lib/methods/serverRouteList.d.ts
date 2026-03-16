@@ -8,11 +8,11 @@ export declare function setServerRouteList(serverRouteList: ServerRouteList): vo
  */
 export declare function addServerRoute(path: string): void;
 /**
- * Deletes all matching route Objects within the serverRouteList Array based on input.
+ * Deletes all matching route Objects within the serverRouteList Array.
  */
 export declare function deleteServerRoute(path: string): void;
 /**
- * Replaces and existing route Object within the serverRouteList Array
+ * Replaces an existing route Object within the serverRouteList Array.
  */
 export declare function replaceServerRoute(oldPath: string, newPath: string): void;
 /**

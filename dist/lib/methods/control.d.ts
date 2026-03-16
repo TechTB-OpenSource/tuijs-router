@@ -1,6 +1,6 @@
 import type { RouterConfig } from '../models.js';
 /**
- * Attaches window and document event listeners to start routing.
+ * Attaches window and document event listeners to start the router.
  */
 export declare function startRouter(): void;
 /**
@@ -8,7 +8,7 @@ export declare function startRouter(): void;
  */
 export declare function stopRouter(): void;
 /**
- * Returns an routerConfig Object.
+ * Returns the active routerConfig object.
  */
 export declare function getRouterConfig(): RouterConfig;
 //# sourceMappingURL=control.d.ts.map

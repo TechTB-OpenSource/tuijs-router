@@ -14,7 +14,7 @@ export function addServerRoute(path) {
     }
 }
 /**
- * Deletes all matching route Objects within the serverRouteList Array based on input.
+ * Deletes all matching route Objects within the serverRouteList Array.
  */
 export function deleteServerRoute(path) {
     for (let i = routerConfig['serverRouteList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop
@@ -24,7 +24,7 @@ export function deleteServerRoute(path) {
     }
 }
 /**
- * Replaces and existing route Object within the serverRouteList Array
+ * Replaces an existing route Object within the serverRouteList Array.
  */
 export function replaceServerRoute(oldPath, newPath) {
     for (let i = routerConfig['serverRouteList'].length - 1; i >= 0; i--) { // Using backward loop since array is being modified in loop

@@ -1,10 +1,10 @@
 import type { Redirect, RedirectList } from '../models.js';
 /**
- * Sets the redirectList Array in the routerConfig Object
+ * Sets the redirectList Array in the routerConfig Object.
  */
 export declare function setRedirectList(redirectList: RedirectList): void;
 /**
- * Creates a redirect Object within the redirectList Array
+ * Creates a redirect Object within the redirectList Array.
  * If a redirect with the same fromPath already exists, it is overwritten with the new redirect Object.
  */
 export declare function addRedirect(newRedirect: Redirect): void;
