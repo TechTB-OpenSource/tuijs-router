@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "tuijs-event": "^0.3.1",
-    "tuijs-util": "^2.0.0"
+    "tuijs-util": "^2.0.1"
   },
   "devDependencies": {
     "rimraf": "^6.1.3",
