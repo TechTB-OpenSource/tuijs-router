@@ -1,4 +1,4 @@
-import { navigateTo, navigateToNewTab, navigateToAnchorTag } from "./methods/navigate.js";
+import { navigateTo, navigateToNewTab, scrollTo } from "./methods/navigate.js";
 /**
  * Handles document click events to determine if the default action should be prevented for client-side routing.
  * If so, a navigation function is called accordingly.
@@ -24,10 +24,10 @@ export function handleClickEvent(event) {
             href.startsWith('mailto:')) {
             return;
         }
-        // If the URL begins with '#', ignore routing and call navigateToAnchorTag to scroll to link location on page
+        // If the URL begins with '#', ignore routing and call scrollTo to scroll to link location on page
         if (href.startsWith('#')) {
             event.preventDefault();
-            navigateToAnchorTag(href);
+            scrollTo(href);
             return;
         }
         // If the target is blank, routing is used to open the page in a new tab

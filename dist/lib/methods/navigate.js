@@ -70,7 +70,7 @@ export async function navigateTo(targetRoute, data = null, visitedPaths = new Se
         activeRoute['route'] = discoveredRoute;
         visitedPaths.clear();
         if (params && params['anchor']) {
-            navigateToAnchorTag(params['anchor']);
+            scrollTo(params['anchor']);
         }
         return;
     }
@@ -97,17 +97,6 @@ export function navigateToNewTab(route) {
     }
 }
 /**
- * Handles anchor tag routes. Scrolls element into view smoothly.
- */
-export function navigateToAnchorTag(anchor) {
-    let element = document.getElementById(anchor.slice(1));
-    if (!element) {
-        console.warn(`TUI Router Warning: Anchor tag with id '${anchor.slice(1)}' not found.`);
-        return;
-    }
-    element.scrollIntoView({ behavior: 'smooth' });
-}
-/**
  * Navigates back to the previous page or to the root if no referrer exists.
  * Uses the browser's history API and delegates to navigateTo to maintain router state.
  */
@@ -127,5 +116,40 @@ export function navigateBack() {
     }
     // No history available, go to root
     navigateTo('/');
+}
+/**
+ * Scrolls element into view smoothly.
+ * Accepts any valid CSS selector (tags, #ids, .classes, etc.).
+ * For IDs, include the # prefix (e.g., '#myId').
+ * Searches main document first, then shadow DOM trees as fallback.
+ */
+export function scrollTo(input) {
+    // Try main document first
+    let element = document.querySelector(input);
+    // If not found, search shadow DOM trees
+    if (!element) {
+        const searchInShadowDOM = (root) => {
+            // Search in current root
+            const found = root.querySelector(input);
+            if (found)
+                return found;
+            // Recursively search all shadow roots
+            const elementsWithShadow = root.querySelectorAll('*');
+            for (const el of elementsWithShadow) {
+                if (el.shadowRoot) {
+                    const shadowResult = searchInShadowDOM(el.shadowRoot);
+                    if (shadowResult)
+                        return shadowResult;
+                }
+            }
+            return null;
+        };
+        element = searchInShadowDOM(document);
+    }
+    if (!element) {
+        console.warn(`TUI Router Warning: Element with selector '${input}' not found.`);
+        return;
+    }
+    element.scrollIntoView({ behavior: 'smooth' });
 }
 //# sourceMappingURL=navigate.js.map

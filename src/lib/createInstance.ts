@@ -16,7 +16,7 @@ export function createRouterInstance() {
     const {
         navigateTo,
         navigateToNewTab,
-        navigateToAnchorTag,
+        scrollTo,
         navigateBack
     } = NAVIGATE;
     const {
@@ -77,7 +77,7 @@ export function createRouterInstance() {
 
         navigateTo,
         navigateToNewTab,
-        navigateToAnchorTag,
+        scrollTo,
         navigateBack
     }
 }

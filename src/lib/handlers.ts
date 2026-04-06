@@ -1,4 +1,4 @@
-import { navigateTo, navigateToNewTab, navigateToAnchorTag } from "./methods/navigate.js";
+import { navigateTo, navigateToNewTab, scrollTo } from "./methods/navigate.js";
 
 
 /**
@@ -28,10 +28,10 @@ export function handleClickEvent(event: Event) {
             return;
         }
 
-        // If the URL begins with '#', ignore routing and call navigateToAnchorTag to scroll to link location on page
+        // If the URL begins with '#', ignore routing and call scrollTo to scroll to link location on page
         if (href.startsWith('#')) {
             event.preventDefault();
-            navigateToAnchorTag(href);
+            scrollTo(href);
             return;
         }
 
