@@ -9,7 +9,10 @@
  */
 export declare function navigateTo(targetRoute: string, data?: Record<string, any> | null, visitedPaths?: Set<string>): Promise<void>;
 /**
-* Allows the client side router to open a page in a new tab
+* Allows the client side router to open a page in a new tab.
+* If the route exists in the client route list, it will open the route in a new tab and run the enter function.
+* If the route does not exist in the client route list but does exist in the server route list, it will open the route in a new tab and send a request to the server.
+* If the route does not exist in either the client or server route list, it will open the route not found path in a new tab.
 */
 export declare function navigateToNewTab(route: string): void;
 /**
