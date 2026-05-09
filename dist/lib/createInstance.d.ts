@@ -29,7 +29,8 @@ export declare function createRouterInstance(): {
     clearState: typeof STATE.clearState;
     navigateTo: typeof NAVIGATE.navigateTo;
     navigateToNewTab: typeof NAVIGATE.navigateToNewTab;
-    scrollTo: typeof NAVIGATE.scrollTo;
+    navigateToAnchorTag: typeof NAVIGATE.navigateToAnchorTag;
     navigateBack: typeof NAVIGATE.navigateBack;
+    scrollTo: typeof NAVIGATE.navigateToAnchorTag;
 };
 //# sourceMappingURL=createInstance.d.ts.map

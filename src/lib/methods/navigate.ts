@@ -83,8 +83,23 @@ export async function navigateTo(targetRoute: string, data: Record<string, any> 
         await enterFunction(params); // Call route export function that corresponds to 'routeList' variable
         activeRoute['route'] = discoveredRoute;
         visitedPaths.clear();
+        // Handle route if it matches and has an anchor tag parameter
         if (params && params['anchor']) {
-            scrollTo(params['anchor']);
+            // Check if the element exists every 100ms for up to 5 seconds, then navigate to anchor tag if it is found.
+            // If it fails, log a warning and do not navigate to anchor tag (Page navigation should already be complete)
+            const maxAttempts: number = 50;
+            let attempts: number = 0;
+            const anchorCheckInterval: number = setInterval(() => {
+                const result = navigateToAnchorTag(params['anchor']);
+                if (result) {
+                    clearInterval(anchorCheckInterval);
+                    return;
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(anchorCheckInterval);
+                    console.warn(`TUI Router Warning: Anchor tag with id '${params['anchor'].slice(1)}' not found after waiting for page navigation to complete.`);
+                }
+                attempts++;
+            }, 100);
         }
         return;
     }
@@ -114,6 +129,55 @@ export function navigateToNewTab(route: string): void {
 }
 
 /**
+ * Handles anchor tag routes
+ * Scrolls to element into view smoothly
+ * Checks for shadow DOM anchor tags with the format #$rootSelector$elementId
+ * Logs a warning if the element is not found and does not attempt to scroll
+ */
+export function navigateToAnchorTag(anchor: string): boolean {
+    let element: HTMLElement | null = null;
+    const elementId: string = anchor.startsWith('#') ? anchor.slice(1) : anchor;
+    // Checks for shadow DOM anchor tag.
+    if (elementId.startsWith('$')) {
+        const [rootSelector, actualElementId] = elementId.split('$').slice(1);
+        const rootElement: Element | null = document.querySelector(rootSelector);
+        if (rootElement === null) {
+            console.warn(`TUI Router Warning: Root element with selector '${rootSelector}' not found.`);
+            return false;
+        }
+        const shadowRoot: ShadowRoot | null = rootElement.shadowRoot;
+        if (shadowRoot === null) {
+            console.warn(`TUI Router Warning: Shadow root not found for element with selector '${rootSelector}'. Attempting to find anchor tag in light DOM instead.`);
+            const element: HTMLElement | null = document.getElementById(actualElementId);
+            if (element === null) {
+                console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in light DOM.`);
+                return false;
+            }
+            element.scrollIntoView({ behavior: 'smooth' });
+            return true;
+        }
+        const element: HTMLElement | null = shadowRoot.getElementById(actualElementId);
+        if (element === null) {
+            console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in shadow DOM of element with selector '${rootSelector}'.`);
+            return false;
+        }
+        element.scrollIntoView({ behavior: 'smooth' });
+        return true;
+    }
+    element = document.getElementById(elementId);
+    // If not found, search shadow DOM trees
+    if (!element) {
+        element = searchForAnchorInShadowDOM(document, elementId);
+    }
+    if (!element) {
+        console.warn(`TUI Router Warning: Element with anchor '${anchor}' not found.`);
+        return false;
+    }
+    element.scrollIntoView({ behavior: 'smooth' });
+    return true;
+}
+
+/**
  * Navigates back to the previous page or to the root if no referrer exists.
  * Uses the browser's history API and delegates to navigateTo to maintain router state.
  */
@@ -136,41 +200,22 @@ export function navigateBack() {
     navigateTo('/');
 }
 
-/**
- * Scrolls element into view smoothly.
- * Accepts any valid CSS selector (tags, #ids, .classes, etc.).
- * For IDs, include the # prefix (e.g., '#myId').
- * Searches main document first, then shadow DOM trees as fallback.
- */
-export function scrollTo(input: string): void {
-    // Try main document first
-    let element: HTMLElement | null = document.querySelector(input);
-    
-    // If not found, search shadow DOM trees
-    if (!element) {
-        const searchInShadowDOM = (root: Document | ShadowRoot): HTMLElement | null => {
-            // Search in current root
-            const found = root.querySelector(input);
-            if (found) return found as HTMLElement;
-            
-            // Recursively search all shadow roots
-            const elementsWithShadow = root.querySelectorAll('*');
-            for (const el of elementsWithShadow) {
-                if (el.shadowRoot) {
-                    const shadowResult = searchInShadowDOM(el.shadowRoot);
-                    if (shadowResult) return shadowResult;
-                }
+function searchForAnchorInShadowDOM(root: Document | ShadowRoot, elementId: string): HTMLElement | null {
+    const searchInShadowDOM = (root: Document | ShadowRoot): HTMLElement | null => {
+        // Search in current root
+        const escapedElementId: string = typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ? CSS.escape(elementId) : elementId;
+        const found = root.querySelector(`#${escapedElementId}`);
+        if (found) return found as HTMLElement;
+
+        // Recursively search all shadow roots
+        const elementsWithShadow = root.querySelectorAll('*');
+        for (const el of elementsWithShadow) {
+            if (el.shadowRoot) {
+                const shadowResult = searchInShadowDOM(el.shadowRoot);
+                if (shadowResult) return shadowResult;
             }
-            return null;
-        };
-        
-        element = searchInShadowDOM(document);
-    }
-    
-    if (!element) {
-        console.warn(`TUI Router Warning: Element with selector '${input}' not found.`);
-        return;
-    }
-    
-    element.scrollIntoView({ behavior: 'smooth' });
+        }
+        return null;
+    };
+    return searchInShadowDOM(root);
 }
