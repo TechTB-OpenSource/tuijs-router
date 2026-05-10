@@ -134,7 +134,7 @@ export function navigateToNewTab(route: string): void {
  * Checks for shadow DOM anchor tags with the format #$rootSelector$elementId
  * Logs a warning if the element is not found and does not attempt to scroll
  */
-export function navigateToAnchorTag(anchor: string): boolean {
+export function navigateToAnchorTag(anchor: string, { behavior = 'smooth' }: { behavior?: ScrollBehavior } = {}): boolean {
     let element: HTMLElement | null = null;
     const elementId: string = anchor.startsWith('#') ? anchor.slice(1) : anchor;
     // Checks for shadow DOM anchor tag.
@@ -153,7 +153,7 @@ export function navigateToAnchorTag(anchor: string): boolean {
                 console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in light DOM.`);
                 return false;
             }
-            element.scrollIntoView({ behavior: 'smooth' });
+            element.scrollIntoView({ behavior });
             return true;
         }
         const element: HTMLElement | null = shadowRoot.getElementById(actualElementId);
@@ -161,7 +161,7 @@ export function navigateToAnchorTag(anchor: string): boolean {
             console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in shadow DOM of element with selector '${rootSelector}'.`);
             return false;
         }
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior });
         return true;
     }
     element = document.getElementById(elementId);
@@ -173,7 +173,7 @@ export function navigateToAnchorTag(anchor: string): boolean {
         console.warn(`TUI Router Warning: Element with anchor '${anchor}' not found.`);
         return false;
     }
-    element.scrollIntoView({ behavior: 'smooth' });
+    element.scrollIntoView({ behavior });
     return true;
 }
 

@@ -18,7 +18,9 @@ export declare function navigateToNewTab(route: string): void;
  * Checks for shadow DOM anchor tags with the format #$rootSelector$elementId
  * Logs a warning if the element is not found and does not attempt to scroll
  */
-export declare function navigateToAnchorTag(anchor: string): boolean;
+export declare function navigateToAnchorTag(anchor: string, { behavior }?: {
+    behavior?: ScrollBehavior;
+}): boolean;
 /**
  * Navigates back to the previous page or to the root if no referrer exists.
  * Uses the browser's history API and delegates to navigateTo to maintain router state.

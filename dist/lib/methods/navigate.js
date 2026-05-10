@@ -118,7 +118,7 @@ export function navigateToNewTab(route) {
  * Checks for shadow DOM anchor tags with the format #$rootSelector$elementId
  * Logs a warning if the element is not found and does not attempt to scroll
  */
-export function navigateToAnchorTag(anchor) {
+export function navigateToAnchorTag(anchor, { behavior = 'smooth' } = {}) {
     let element = null;
     const elementId = anchor.startsWith('#') ? anchor.slice(1) : anchor;
     // Checks for shadow DOM anchor tag.
@@ -137,7 +137,7 @@ export function navigateToAnchorTag(anchor) {
                 console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in light DOM.`);
                 return false;
             }
-            element.scrollIntoView({ behavior: 'smooth' });
+            element.scrollIntoView({ behavior });
             return true;
         }
         const element = shadowRoot.getElementById(actualElementId);
@@ -145,7 +145,7 @@ export function navigateToAnchorTag(anchor) {
             console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in shadow DOM of element with selector '${rootSelector}'.`);
             return false;
         }
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior });
         return true;
     }
     element = document.getElementById(elementId);
@@ -157,7 +157,7 @@ export function navigateToAnchorTag(anchor) {
         console.warn(`TUI Router Warning: Element with anchor '${anchor}' not found.`);
         return false;
     }
-    element.scrollIntoView({ behavior: 'smooth' });
+    element.scrollIntoView({ behavior });
     return true;
 }
 /**
