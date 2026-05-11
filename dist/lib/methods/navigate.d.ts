@@ -1,3 +1,4 @@
+import type { NavigateToAnchorTagOptions } from '../models.js';
 /**
  * Navigates to the target route.
  * If the target route is the same as the current route, it will re-run the enter function and update state.
@@ -21,9 +22,7 @@ export declare function navigateToNewTab(route: string): void;
  * Checks for shadow DOM anchor tags with the format #$rootSelector$elementId
  * Logs a warning if the element is not found and does not attempt to scroll
  */
-export declare function navigateToAnchorTag(anchor: string, { behavior }?: {
-    behavior?: ScrollBehavior;
-}): boolean;
+export declare function navigateToAnchorTag(anchor: string, options?: NavigateToAnchorTagOptions): boolean;
 /**
  * Navigates back to the previous page or to the root if no referrer exists.
  * Uses the browser's history API and delegates to navigateTo to maintain router state.

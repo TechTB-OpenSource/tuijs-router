@@ -3,7 +3,8 @@ import type {
     Redirect,
     RedirectList,
     DiscoverClientRouteResult,
-    DiscoveredServerRouteResult
+    DiscoveredServerRouteResult,
+    NavigateToAnchorTagOptions
 } from '../models.js';
 import { routerConfig, activeRoute, stateData } from '../globals.js';
 import { findClientRoute, findServerRoute, sanitizePath } from '../utils.js';
@@ -137,38 +138,67 @@ export function navigateToNewTab(route: string): void {
  * Checks for shadow DOM anchor tags with the format #$rootSelector$elementId
  * Logs a warning if the element is not found and does not attempt to scroll
  */
-export function navigateToAnchorTag(anchor: string, { behavior = 'smooth' }: { behavior?: ScrollBehavior } = {}): boolean {
+export function navigateToAnchorTag(anchor: string, options: NavigateToAnchorTagOptions = {}): boolean {
+    const { behavior, searchShadowDom } = options ?? {};
+    const finalBehavior = behavior ?? 'smooth';
+    const finalSearchShadowDom = searchShadowDom ?? true;
     let element: HTMLElement | null = null;
     const elementId: string = anchor.startsWith('#') ? anchor.slice(1) : anchor;
+
+    // If searchShadowDom is explicitly set to false, only search for anchor tag in light DOM and do not search shadow DOM trees.
+    if (finalSearchShadowDom === false) {
+        element = document.getElementById(elementId);
+        // If not found, log a warning and return false.
+        if (!element) {
+            console.warn(`TUI Router Warning: Element with anchor '${anchor}' not found.`);
+            console.warn(`TUI Router Warning: Search shadow DOM option is set to false. Set searchShadowDom to true to enable searching for anchor tags in shadow DOM trees.`);
+            return false;
+        }
+        // If found, scroll it into view and return true.
+        element.scrollIntoView({ behavior: finalBehavior });
+        return true;
+    }
+
+    // If finalSearchShadowDom is true, continue with normal search that includes searching for shadow DOM anchor tags.
     // Checks for shadow DOM anchor tag.
     if (elementId.startsWith('$')) {
+        // Validate $ wrapper
         const [rootSelector, actualElementId] = elementId.split('$').slice(1);
+        if (!rootSelector || !actualElementId) {
+            console.warn(`TUI Router Warning: Invalid shadow DOM anchor format for anchor '${anchor}'. Expected format is '#$rootSelector$elementId'.`);
+            return false;
+        }
         const rootElement: Element | null = document.querySelector(rootSelector);
+        // If root element or shadow root is not found, log a warning and return false.
         if (rootElement === null) {
             console.warn(`TUI Router Warning: Root element with selector '${rootSelector}' not found.`);
             return false;
         }
         const shadowRoot: ShadowRoot | null = rootElement.shadowRoot;
+
+        // If shadow root is not found, log a warning and return false.
         if (shadowRoot === null) {
-            console.warn(`TUI Router Warning: Shadow root not found for element with selector '${rootSelector}'. Attempting to find anchor tag in light DOM instead.`);
-            const element: HTMLElement | null = document.getElementById(actualElementId);
-            if (element === null) {
-                console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in light DOM.`);
-                return false;
-            }
-            element.scrollIntoView({ behavior });
-            return true;
+            console.warn(`TUI Router Warning: Shadow root not found for element with selector '${rootSelector}'. For '#$rootSelector$elementId' anchors, only shadow DOM is searched.`);
+            return false;
         }
+
+        // If shadow root is found, attempt to find the anchor tag in the shadow DOM.
         const element: HTMLElement | null = shadowRoot.getElementById(actualElementId);
+        // If the element is not found in the shadow DOM, log a warning and return false.
         if (element === null) {
             console.warn(`TUI Router Warning: Anchor tag with id '${actualElementId}' not found in shadow DOM of element with selector '${rootSelector}'.`);
             return false;
         }
-        element.scrollIntoView({ behavior });
+        // If the element is found in the shadow DOM, scroll it into view and return true.
+        element.scrollIntoView({ behavior: finalBehavior });
         return true;
     }
+
+    // If finalSearchShadowDom is true, and the '$' wrapper was not used, search for the anchor tag in the light DOM first, then search shadow DOM trees if it is not found in the light DOM.
+    // First attempt to find the element in the light DOM.
     element = document.getElementById(elementId);
-    // If not found, search shadow DOM trees
+    // If not found, search shadow DOM trees.
+    // This a good fallback, but should be avoided. either explicit light DOM search or the '$' wrapper should be used in production as this fallback may have performance implications.
     if (!element) {
         element = searchForAnchorInShadowDOM(document, elementId);
     }
@@ -176,7 +206,7 @@ export function navigateToAnchorTag(anchor: string, { behavior = 'smooth' }: { b
         console.warn(`TUI Router Warning: Element with anchor '${anchor}' not found.`);
         return false;
     }
-    element.scrollIntoView({ behavior });
+    element.scrollIntoView({ behavior: finalBehavior });
     return true;
 }
 

@@ -201,12 +201,21 @@ Allows the client side router to open a page in a new tab.
 | route        | string   | The route to be navigated to |
 <br>
 
-### scrollTo
+### navigateToAnchorTag (scrollTo)
 Handles anchor tag routes. Scrolls element into view smoothly.
+If the anchor tag is in a shadow DOM, the shadow DOM root should be added to the anchor tag wrapped in "$".
+This tells **navigateToAnchorTag** where to search for the anchor tag.
+Example: "#$shadowRootId$targetElementId"
 
 | Parameters   | Type     | Description                          |
 |--------------|----------|--------------------------------------|
 | anchor       | string   | The element to be scrolled into view |
+| options      | Object   | Options for the scroll.              |
+
+**Options**
+behavior: ScrollBehavior - The scroll behavior to be used. Default is 'smooth'.
+searchShadowDom: boolean - Weather the shadow DOM should be searched. This defaults to true. If no shadow root is provided, navigateToAnchorTag will search the entire tree, which provides a simple dev experience but can impact performance for large DOM trees. Using the "$" wrapper is recommended if the target anchor tag is in a Shadow DOM.
+
 <br>
 
 ### NavigateBack

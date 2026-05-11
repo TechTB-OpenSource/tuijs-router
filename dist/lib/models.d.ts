@@ -36,4 +36,8 @@ export interface DiscoveredServerRouteResult {
     discoveredRoute: string;
     params?: Record<string, any>;
 }
+export interface NavigateToAnchorTagOptions {
+    behavior?: ScrollBehavior;
+    searchShadowDom?: boolean;
+}
 //# sourceMappingURL=models.d.ts.map
