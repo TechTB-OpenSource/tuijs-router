@@ -16,15 +16,17 @@ export declare function navigateTo(targetRoute: string, data?: Record<string, an
 */
 export declare function navigateToNewTab(route: string): void;
 /**
+ * Handles anchor tag routes
+ * Scrolls to element into view smoothly
+ * Checks for shadow DOM anchor tags with the format #$rootSelector$elementId
+ * Logs a warning if the element is not found and does not attempt to scroll
+ */
+export declare function navigateToAnchorTag(anchor: string, { behavior }?: {
+    behavior?: ScrollBehavior;
+}): boolean;
+/**
  * Navigates back to the previous page or to the root if no referrer exists.
  * Uses the browser's history API and delegates to navigateTo to maintain router state.
  */
 export declare function navigateBack(): void;
-/**
- * Scrolls element into view smoothly.
- * Accepts any valid CSS selector (tags, #ids, .classes, etc.).
- * For IDs, include the # prefix (e.g., '#myId').
- * Searches main document first, then shadow DOM trees as fallback.
- */
-export declare function scrollTo(input: string): void;
 //# sourceMappingURL=navigate.d.ts.map

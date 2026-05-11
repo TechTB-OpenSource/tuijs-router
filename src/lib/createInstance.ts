@@ -16,7 +16,7 @@ export function createRouterInstance() {
     const {
         navigateTo,
         navigateToNewTab,
-        scrollTo,
+        navigateToAnchorTag,
         navigateBack
     } = NAVIGATE;
     const {
@@ -25,6 +25,7 @@ export function createRouterInstance() {
         deleteRoute,
         getRouteList
     } = ROUTE_LIST;
+    const scrollTo = NAVIGATE.navigateToAnchorTag;
     const {
         setRedirectList,
         addRedirect,
@@ -77,7 +78,8 @@ export function createRouterInstance() {
 
         navigateTo,
         navigateToNewTab,
-        scrollTo,
-        navigateBack
+        navigateToAnchorTag,
+        navigateBack,
+        scrollTo
     }
 }

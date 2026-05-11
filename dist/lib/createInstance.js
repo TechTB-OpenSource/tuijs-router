@@ -7,8 +7,9 @@ import * as ROUTE_NOT_FOUND from './methods/routeNotFound.js';
 import * as STATE from './methods/state.js';
 export function createRouterInstance() {
     const { startRouter, stopRouter, getRouterConfig } = CONTROL;
-    const { navigateTo, navigateToNewTab, scrollTo, navigateBack } = NAVIGATE;
+    const { navigateTo, navigateToNewTab, navigateToAnchorTag, navigateBack } = NAVIGATE;
     const { setRouteList, addRoute, deleteRoute, getRouteList } = ROUTE_LIST;
+    const scrollTo = NAVIGATE.navigateToAnchorTag;
     const { setRedirectList, addRedirect, deleteRedirect, getRedirectList } = REDIRECT_LIST;
     const { setServerRouteList, addServerRoute, deleteServerRoute, replaceServerRoute, getServerRouteList } = SERVER_ROUTE_LIST;
     const { setRouteNotFound, getRouteNotFound } = ROUTE_NOT_FOUND;
@@ -37,8 +38,9 @@ export function createRouterInstance() {
         clearState,
         navigateTo,
         navigateToNewTab,
-        scrollTo,
-        navigateBack
+        navigateToAnchorTag,
+        navigateBack,
+        scrollTo
     };
 }
 //# sourceMappingURL=createInstance.js.map
